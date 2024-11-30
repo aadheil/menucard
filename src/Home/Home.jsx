@@ -1,5 +1,7 @@
+import React, { useEffect, useState } from 'react';
 import { Icon } from '@iconify/react/dist/iconify.js';
-import React, { useState } from 'react';
+import { GetProductList } from '../Services/allApi';
+import AddCart from './AddCart';
 
 function Home() {
     const [items, setItems] = useState([
@@ -54,29 +56,76 @@ function Home() {
     ]);
 
     const updateToCart = (id) => {
-        setItems(items.map(item => 
+        setItems(items.map(item =>
             item.id === id ? { ...item, cartCount: 1 } : item
         ));
     };
 
     const plusItems = (id) => {
-        setItems(items.map(item => 
+        setItems(items.map(item =>
             item.id === id ? { ...item, cartCount: item.cartCount + 1 } : item
         ));
     };
-    
+
     const minusItems = (id) => {
-        setItems(items.map(item => 
+        setItems(items.map(item =>
             item.id === id && item.cartCount > 1 ? { ...item, cartCount: item.cartCount - 1 } : item
         ));
     };
-    
+
+    const getItems = async () => {
+        const username = "admin";
+        const password = "admin123";
+        const reqHeaders = {
+            'Authorization': 'Basic ' + btoa(username + ":" + password)
+        };
+        const res = await GetProductList(reqHeaders);
+        const newData = res?.data?.map((item) => ({
+            id: item?.id,
+            name: item?.itemName,
+            description: item?.itemDescription,
+            price: item?.price,
+            image: item?.image ?? 'https://th.bing.com/th/id/OIP.XSCo5S6kP3o-7-jVqH4vGgHaE8?rs=1&pid=ImgDetMain',
+            cartCount: 0,
+        }));
+        console.log(newData);
+        // setItems(newData);
+    };
+
+    useEffect(() => {
+        getItems();
+    }, []);
+
     return (
-        <div className='flex justify-center bg-gray-100 h-lvh w-full' style={{ fontFamily: 'ropa sans' }}>
-            <div className='flex flex-col w-full h-full'>
-                <div className='flex w-full justify-center px-3 mt-5'>
-                    <input className='w-full rounded-lg p-2 border-[#F39C12] border shadow bg-transparent' type="text" placeholder='Search ' />
+        <div className='flex justify-center bg-white min-h-screen w-full' style={{ fontFamily: 'ropa sans' }}>
+            <div className='flex flex-col w-full pb-20'> {/* Adjusted padding for cart */}
+                <div><h5 className='px-3 pt-5 pb-3 font-bold text-4xl'>Find delicious items from</h5></div>
+                <div><h5 className='px-2  font-bold text-4xl text-[#F39C12]'>Aswin Restaurant</h5></div>
+                <div className='flex flex-row px-3 items-center justify-between'>
+                    <div className='flex gap-2 pt-3 font-bold items-center text-gray-600  '>
+                        <span className='text-gray-600 text-sm'>Starters</span><span><Icon icon="icon-park-solid:down-one" /></span>
+                        </div>
+                    <div className='flex flex-row gap-5'>
+                        <div className='border border-green-500 rounded p-1'><div className=' w-3 h-3 bg-green-500 rounded'></div></div>
+                        <div className='border border-red-500 rounded p-1'><div className=' w-3 h-3 bg-red-500 rounded'></div></div>
+                    </div>
                 </div>
+                <div className="flex w-full justify-center px-3 mt-5">
+                    <div className="relative w-full flex items-center">
+                        {/* Search Icon */}
+                        <Icon
+                            icon="icon-park-outline:search"
+                            className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400"
+                        />
+                        {/* Search Input */}
+                        <input
+                            className="w-full rounded-lg p-2 pl-8 border-[#F39C12] border shadow bg-transparent"
+                            type="text"
+                            placeholder="Search"
+                        />
+                    </div>
+                </div>
+
                 <div className='flex flex-col gap-5 mt-5'>
                     {items?.map((item) => (
                         <React.Fragment key={item.id}>
@@ -84,7 +133,7 @@ function Home() {
                                 <div className='w-4/12 h-28'>
                                     <img src={item.image} className='w-full h-full object-cover rounded-lg shadow-lg' alt={item.name} />
                                 </div>
-                                <div className='flex flex-col w-8/12 ps-5 h-28  gap-2'>
+                                <div className='flex flex-col w-8/12 ps-5 h-28 gap-2'>
                                     <div className='flex flex-row justify-between'>
                                         <h1 className='font-bold text-lg'>{item.name}</h1>
                                     </div>
@@ -101,12 +150,12 @@ function Home() {
                                             </button>
                                         ) : (
                                             <div className='flex flex-row gap-4 h-7 items-center border border-[#F39C12] rounded shadow'>
-                                                <button onClick={() => minusItems(item?.id)} className='px-2 py-1  rounded text-[#F39C12] '>
+                                                <button onClick={() => minusItems(item?.id)} className='px-2 py-1 rounded text-[#F39C12]'>
                                                     <Icon icon="ic:baseline-minus" />
                                                 </button>
                                                 <span className='font-bold text-[#F39C12] text-lg'>{item?.cartCount}</span>
-                                                <button onClick={() => plusItems(item?.id)} className='px-2 py-1 rounded text-[#F39C12] '>
-                                                    <Icon icon="ic:baseline-plus"  />
+                                                <button onClick={() => plusItems(item?.id)} className='px-2 py-1 rounded text-[#F39C12]'>
+                                                    <Icon icon="ic:baseline-plus" />
                                                 </button>
                                             </div>
                                         )}
@@ -120,6 +169,7 @@ function Home() {
                     ))}
                 </div>
             </div>
+            <AddCart className='shadow-2xl' />
         </div>
     );
 }
