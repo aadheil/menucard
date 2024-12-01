@@ -4,57 +4,57 @@ import { GetProductList } from '../Services/allApi';
 import AddCart from './AddCart';
 
 function Home() {
-    const [items, setItems] = useState([
-        {
-            id: 1,
-            name: 'Chicken Biryani',
-            description: 'Aromatic rice cooked with tender chicken pieces and flavorful spices for an unforgettable taste of India.',
-            price: 190,
-            image: 'https://th.bing.com/th/id/R.09d7570ca347e320f19925b4aa057c2e?rik=jpTwTjtLLsd%2fKQ&riu=http%3a%2f%2fwww.bombaycafeboca.com%2fwp-content%2fuploads%2f2016%2f12%2f28978-chicken-biryani.jpg&ehk=pDqNcMSLbccL6T0AK0YSKoUHgdjiCuiNJ%2boG0dxsem4%3d&risl=&pid=ImgRaw&r=0',
-            cartCount: 0
-        },
-        {
-            id: 2,
-            name: 'Mutton Biryani',
-            description: 'Rich and flavorful biryani made with marinated mutton and seasoned with aromatic spices.',
-            price: 250,
-            image: 'https://www.licious.in/blog/wp-content/uploads/2022/06/mutton-hyderabadi-biryani-01-750x750.jpg',
-            cartCount: 0
-        },
-        {
-            id: 3,
-            name: 'Paneer Tikka',
-            description: 'Grilled paneer cubes marinated in spicy yogurt, perfect as a vegetarian appetizer.',
-            price: 150,
-            image: 'https://2.bp.blogspot.com/-neI6rKuvsKI/VyN8GMrfhzI/AAAAAAAAHls/hugFFTKYgs8lrtUSXx0iEyG-KZwL4bPbwCLcB/s1600/tandoori-paneer-tikka4.jpg',
-            cartCount: 0
-        },
-        {
-            id: 4,
-            name: 'Masala Dosa',
-            description: 'Crispy and golden dosa filled with spiced potato filling, served with chutney and sambar.',
-            price: 100,
-            image: 'https://th.bing.com/th/id/OIP.XSCo5S6kP3o-7-jVqH4vGgHaE8?rs=1&pid=ImgDetMain',
-            cartCount: 0,
-        },
-        {
-            id: 5,
-            name: 'Pav Bhaji',
-            description: 'A delicious blend of mashed vegetables and spices served with buttered bread rolls.',
-            price: 80,
-            image: 'https://th.bing.com/th/id/OIP.QIdkAbtgTIW7vvuG8h-ewwHaLF?w=900&h=1348&rs=1&pid=ImgDetMain',
-            cartCount: 0
-        },
-        {
-            id: 6,
-            name: 'Butter Chicken',
-            description: 'Tender chicken pieces in a creamy tomato sauce, a classic North Indian dish.',
-            price: 220,
-            image: 'https://www.whiskaffair.com/wp-content/uploads/2014/08/Butter-Chicken-2-1-1200x1800.jpg',
-            cartCount: 0
-        }
-    ]);
-
+    // const [items, setItems] = useState([
+    //     {
+    //         id: 1,
+    //         name: 'Chicken Biryani',
+    //         description: 'Aromatic rice cooked with tender chicken pieces and flavorful spices for an unforgettable taste of India.',
+    //         price: 190,
+    //         image: 'https://th.bing.com/th/id/R.09d7570ca347e320f19925b4aa057c2e?rik=jpTwTjtLLsd%2fKQ&riu=http%3a%2f%2fwww.bombaycafeboca.com%2fwp-content%2fuploads%2f2016%2f12%2f28978-chicken-biryani.jpg&ehk=pDqNcMSLbccL6T0AK0YSKoUHgdjiCuiNJ%2boG0dxsem4%3d&risl=&pid=ImgRaw&r=0',
+    //         cartCount: 0
+    //     },
+    //     {
+    //         id: 2,
+    //         name: 'Mutton Biryani',
+    //         description: 'Rich and flavorful biryani made with marinated mutton and seasoned with aromatic spices.',
+    //         price: 250,
+    //         image: 'https://www.licious.in/blog/wp-content/uploads/2022/06/mutton-hyderabadi-biryani-01-750x750.jpg',
+    //         cartCount: 0
+    //     },
+    //     {
+    //         id: 3,
+    //         name: 'Paneer Tikka',
+    //         description: 'Grilled paneer cubes marinated in spicy yogurt, perfect as a vegetarian appetizer.',
+    //         price: 150,
+    //         image: 'https://2.bp.blogspot.com/-neI6rKuvsKI/VyN8GMrfhzI/AAAAAAAAHls/hugFFTKYgs8lrtUSXx0iEyG-KZwL4bPbwCLcB/s1600/tandoori-paneer-tikka4.jpg',
+    //         cartCount: 0
+    //     },
+    //     {
+    //         id: 4,
+    //         name: 'Masala Dosa',
+    //         description: 'Crispy and golden dosa filled with spiced potato filling, served with chutney and sambar.',
+    //         price: 100,
+    //         image: 'https://th.bing.com/th/id/OIP.XSCo5S6kP3o-7-jVqH4vGgHaE8?rs=1&pid=ImgDetMain',
+    //         cartCount: 0,
+    //     },
+    //     {
+    //         id: 5,
+    //         name: 'Pav Bhaji',
+    //         description: 'A delicious blend of mashed vegetables and spices served with buttered bread rolls.',
+    //         price: 80,
+    //         image: 'https://th.bing.com/th/id/OIP.QIdkAbtgTIW7vvuG8h-ewwHaLF?w=900&h=1348&rs=1&pid=ImgDetMain',
+    //         cartCount: 0
+    //     },
+    //     {
+    //         id: 6,
+    //         name: 'Butter Chicken',
+    //         description: 'Tender chicken pieces in a creamy tomato sauce, a classic North Indian dish.',
+    //         price: 220,
+    //         image: 'https://www.whiskaffair.com/wp-content/uploads/2014/08/Butter-Chicken-2-1-1200x1800.jpg',
+    //         cartCount: 0
+    //     }
+    // ]);
+    const [items, setItems]=useState([])
     const updateToCart = (id) => {
         setItems(items.map(item =>
             item.id === id ? { ...item, cartCount: 1 } : item
