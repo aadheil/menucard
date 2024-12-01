@@ -40,5 +40,6 @@
   },
   "devDependencies": {
     "tailwindcss": "^3.4.14"
-  }
+  },
+  "proxy": "http://16.171.227.54:8081"
 }
