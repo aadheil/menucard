@@ -89,7 +89,7 @@ function Home() {
             cartCount: 0,
         }));
         console.log(newData);
-        // setItems(newData);
+        setItems(newData);
     };
 
     useEffect(() => {
