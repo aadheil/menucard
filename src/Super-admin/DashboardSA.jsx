@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+// import Sidebar from "./Sidebar";
 
 function DashboardSA() {
   const [menuItem, setMenuItem] = useState({
@@ -38,53 +39,12 @@ function DashboardSA() {
   return (
     <div className="flex flex-col md:flex-row min-h-screen bg-gray-100">
       {/* Sidebar */}
-      <aside className="w-full md:w-64 bg-white shadow-lg">
-        <div className="p-4 border-b border-gray-200">
-          <h1 className="text-2xl font-bold text-gray-800">Super Admin</h1>
-        </div>
-        <nav className="p-4">
-          <ul className="space-y-4">
-            <li
-              onClick={() => setActiveSection("addMenu")}
-              className={`cursor-pointer flex items-center p-2 text-gray-700 rounded-md ${
-                activeSection === "addMenu"
-                  ? "bg-gray-200 font-semibold"
-                  : "hover:bg-gray-200"
-              }`}
-            >
-              <span className="text-xl">🍽️</span>
-              <span className="ml-3">Add Menu</span>
-            </li>
-            <li
-              onClick={() => setActiveSection("viewRestaurants")}
-              className={`cursor-pointer flex items-center p-2 text-gray-700 rounded-md ${
-                activeSection === "viewRestaurants"
-                  ? "bg-gray-200 font-semibold"
-                  : "hover:bg-gray-200"
-              }`}
-            >
-              <span className="text-xl">🏨</span>
-              <span className="ml-3">View Restaurants</span>
-            </li>
-            <li
-              onClick={() => setActiveSection("settings")}
-              className={`cursor-pointer flex items-center p-2 text-gray-700 rounded-md ${
-                activeSection === "settings"
-                  ? "bg-gray-200 font-semibold"
-                  : "hover:bg-gray-200"
-              }`}
-            >
-              <span className="text-xl">⚙️</span>
-              <span className="ml-3">Settings</span>
-            </li>
-          </ul>
-        </nav>
-      </aside>
+      {/* <Sidebar activeSection={activeSection} setActiveSection={setActiveSection} /> */}
 
       {/* Main Content Area */}
       <div className="flex-1 flex flex-col">
         {/* Top Bar */}
-        <header className="flex flex-col md:flex-row items-center justify-between bg-white shadow-md p-4 space-y-2 md:space-y-0">
+        <header className="flex h-16 flex-col md:flex-row items-center justify-between bg-white shadow-md p-4 space-y-2 md:space-y-0 ">
           <h2 className="text-xl font-semibold text-gray-800">
             Dashboard Overview
           </h2>
@@ -102,14 +62,12 @@ function DashboardSA() {
 
         {/* Dashboard Content */}
         <main className="flex-1 p-6 bg-gray-100">
-          {/* Render Based on Active Section */}
           {activeSection === "addMenu" && (
             <div className="bg-white p-6 rounded-lg shadow-md">
               <h3 className="text-2xl font-semibold text-gray-800 mb-4">
                 Add New Menu Item
               </h3>
               <form onSubmit={handleSubmit} className="space-y-4">
-                {/* Food Name */}
                 <div>
                   <label className="block text-sm font-medium text-gray-700">
                     Food Name
@@ -124,8 +82,6 @@ function DashboardSA() {
                     placeholder="Enter food name"
                   />
                 </div>
-
-                {/* Description */}
                 <div>
                   <label className="block text-sm font-medium text-gray-700">
                     Description
@@ -140,8 +96,6 @@ function DashboardSA() {
                     rows="3"
                   />
                 </div>
-
-                {/* Price */}
                 <div>
                   <label className="block text-sm font-medium text-gray-700">
                     Price (₹)
@@ -156,8 +110,6 @@ function DashboardSA() {
                     placeholder="Enter price"
                   />
                 </div>
-
-                {/* Image Upload */}
                 <div>
                   <label className="block text-sm font-medium text-gray-700">
                     Upload Image
@@ -169,8 +121,6 @@ function DashboardSA() {
                     className="w-full px-4 py-2 border rounded-lg focus:outline-none"
                   />
                 </div>
-
-                {/* Image Preview */}
                 {preview && (
                   <div className="mt-4">
                     <p className="text-sm text-gray-500">Image Preview:</p>
@@ -181,8 +131,6 @@ function DashboardSA() {
                     />
                   </div>
                 )}
-
-                {/* Submit Button */}
                 <div>
                   <button
                     type="submit"
