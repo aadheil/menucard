@@ -19,7 +19,6 @@ function DashboardSA() {
   };
 
   const handleAddMenuItem = () => {
-    // Validate the new item before adding to the list
     const price = parseFloat(newMenuItem.price);
     const totalQuantity = parseInt(newMenuItem.totalQuantity, 10);
 
@@ -78,23 +77,22 @@ function DashboardSA() {
       {/* Main Content Area */}
       <div className="flex-1 flex flex-col">
         {/* Top Bar */}
-        <header className="flex h-16 flex-col md:flex-row items-center justify-between bg-white shadow-md p-4 space-y-2 md:space-y-0">
+        <header className="flex flex-wrap items-center justify-between bg-white shadow-md p-4">
           <h2 className="text-xl font-semibold text-gray-800">Dashboard Overview</h2>
-          <div className="flex items-center space-x-4 w-full md:w-auto">
-            <input
-              type="text"
-              placeholder="Search..."
-              className="w-full md:w-auto px-4 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-[#F39C12]"
-            />
-            <button className="px-4 py-2 bg-[#F39C12] text-white rounded-md hover:bg-[#e67e22]">Logout</button>
+          <div className="flex flex-grow md:ml-0 items-center gap-4 justify-end">
+            <button className="ml-auto px-4 py-2 bg-[#F39C12] text-white rounded-md hover:bg-[#e67e22]">
+              Logout
+            </button>
           </div>
         </header>
 
         {/* Dashboard Content */}
-        <main className="flex-1 p-6 bg-gray-100">
+        <main className="flex-1 p-4 md:p-6 bg-gray-100">
           {activeSection === "addMenu" && (
-            <div className="bg-white p-6 rounded-lg shadow-md">
-              <h3 className="text-2xl font-semibold text-gray-800 mb-4">Add New Menu Items</h3>
+            <div className="bg-white p-4 md:p-6 rounded-lg shadow-md">
+              <h3 className="text-lg md:text-2xl font-semibold text-gray-800 mb-4">
+                Add New Menu Items
+              </h3>
               <form onSubmit={handleSubmit} className="space-y-4">
                 {message && (
                   <div
@@ -131,29 +129,31 @@ function DashboardSA() {
                     rows="3"
                   />
                 </div>
-                <div>
-                  <label className="block text-sm font-medium text-gray-700">Price (₹)</label>
-                  <input
-                    type="number"
-                    name="price"
-                    value={newMenuItem.price}
-                    onChange={handleChange}
-                    required
-                    className="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-[#F39C12]"
-                    placeholder="Enter price"
-                  />
-                </div>
-                <div>
-                  <label className="block text-sm font-medium text-gray-700">Total Quantity</label>
-                  <input
-                    type="number"
-                    name="totalQuantity"
-                    value={newMenuItem.totalQuantity}
-                    onChange={handleChange}
-                    required
-                    className="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-[#F39C12]"
-                    placeholder="Enter total quantity"
-                  />
+                <div className="flex flex-wrap gap-4">
+                  <div className="flex-1">
+                    <label className="block text-sm font-medium text-gray-700">Price (₹)</label>
+                    <input
+                      type="number"
+                      name="price"
+                      value={newMenuItem.price}
+                      onChange={handleChange}
+                      required
+                      className="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-[#F39C12]"
+                      placeholder="Enter price"
+                    />
+                  </div>
+                  <div className="flex-1">
+                    <label className="block text-sm font-medium text-gray-700">Total Quantity</label>
+                    <input
+                      type="number"
+                      name="totalQuantity"
+                      value={newMenuItem.totalQuantity}
+                      onChange={handleChange}
+                      required
+                      className="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-[#F39C12]"
+                      placeholder="Enter total quantity"
+                    />
+                  </div>
                 </div>
                 <div>
                   <label className="block text-sm font-medium text-gray-700">Restaurant ID</label>
@@ -179,9 +179,9 @@ function DashboardSA() {
               </form>
               <div className="mt-6">
                 <h4 className="text-lg font-semibold">Menu Items to Add:</h4>
-                <ul className="list-disc pl-6 mt-2">
+                <ul className="list-disc pl-6 mt-2 space-y-2">
                   {menuItems.map((item, index) => (
-                    <li key={index}>
+                    <li key={index} className="text-sm md:text-base">
                       {item.itemName} - ₹{item.price}, Quantity: {item.totalQuantity}, Restaurant: {item.restaurantId}
                     </li>
                   ))}

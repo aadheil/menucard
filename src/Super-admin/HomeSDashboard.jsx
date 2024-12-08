@@ -1,19 +1,28 @@
-import React from 'react';
-import { Outlet } from 'react-router-dom';
-import SidebarSA from './SidebarSA';
+import React, { useState } from "react";
+import { Outlet } from "react-router-dom";
+import SidebarSA from "./SidebarSA";
 
 const HomeSDashboard = () => {
-  return (
-    <div className="flex" >
-      {/* Sidebar */}
-      <div className="fixed top-0 left-0 h-full w-56">
-        <SidebarSA />
-      </div>
+  const [isSidebarOpen, setIsSidebarOpen] = useState(false);
 
-      {/* Main Content with left margin to avoid overlap */}
-      <div className="flex-1 ml-56">
-        {/* Nested Route Content will appear here */}
-        
+  const toggleSidebar = () => setIsSidebarOpen(!isSidebarOpen);
+
+  return (
+    <div className="flex">
+      {/* Sidebar */}
+      <SidebarSA isSidebarOpen={isSidebarOpen} toggleSidebar={toggleSidebar} />
+
+      {/* Main Content */}
+      <div className="flex-1">
+        {/* Hamburger Menu for Mobile */}
+        <button
+          onClick={toggleSidebar}
+          className="p-2 m-4 bg-gray-800 text-white rounded-md md:hidden"
+        >
+          ☰
+        </button>
+
+        {/* Nested Route Content */}
         <Outlet />
       </div>
     </div>
