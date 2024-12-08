@@ -1,5 +1,5 @@
-import React, { useEffect, useState } from 'react';
 import { Icon } from '@iconify/react/dist/iconify.js';
+import React, { useEffect, useState } from 'react';
 import { GetProductList } from '../Services/allApi';
 import AddCart from './AddCart';
 
@@ -8,20 +8,30 @@ function Home() {
   const [selectedCategory, setSelectedCategory] = useState('Starters');
   const [selectedType, setSelectedType] = useState('All');
   const [loading, setLoading] = useState(true);
-  const [cartCount, setCartCount] = useState(0); // Track total items in the cart
+  const [cartItems, setCartItems] = useState([]); // Cart items array
 
   const updateToCart = (id) => {
     setItems(items.map(item =>
       item.id === id ? { ...item, cartCount: 1 } : item
     ));
-    setCartCount(cartCount + 1); // Increment cart count when an item is added
+    
+    const selectedItem = items.find(item => item.id === id);
+    if (selectedItem) {
+      const existingItem = cartItems.find(item => item.id === id);
+      if (!existingItem) {
+        setCartItems([...cartItems, { ...selectedItem, cartCount: 1 }]);
+      }
+    }
   };
 
   const plusItems = (id) => {
     setItems(items.map(item =>
       item.id === id ? { ...item, cartCount: item.cartCount + 1 } : item
     ));
-    setCartCount(cartCount + 1); // Increment cart count when items are added
+    
+    setCartItems(cartItems.map(item =>
+      item.id === id ? { ...item, cartCount: item.cartCount + 1 } : item
+    ));
   };
 
   const minusItems = (id) => {
@@ -32,7 +42,14 @@ function Home() {
         ? { ...item, cartCount: 0 }
         : item
     ));
-    setCartCount(cartCount > 0 ? cartCount - 1 : 0); // Decrement cart count when items are removed
+
+    setCartItems(cartItems
+      .map(item =>
+        item.id === id
+          ? { ...item, cartCount: item.cartCount - 1 }
+          : item
+      )
+      .filter(item => item.cartCount > 0)); // Remove item if cartCount is 0
   };
 
   const getItems = async () => {
@@ -205,8 +222,8 @@ function Home() {
         </div>
       </div>
 
-      {/* Pass the cartCount to AddCart component */}
-      <AddCart cartCount={cartCount} />
+      {/* Pass the cartItems to AddCart component */}
+      <AddCart cartCount={cartItems.length} cartItems={cartItems} />
     </div>
   );
 }
