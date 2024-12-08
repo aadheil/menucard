@@ -40,7 +40,7 @@ function DashboardSA() {
       {/* Sidebar */}
       <aside className="w-full md:w-64 bg-white shadow-lg">
         <div className="p-4 border-b border-gray-200">
-          <h1 className="text-2xl font-bold text-gray-800">Restaurant Admin</h1>
+          <h1 className="text-2xl font-bold text-gray-800">Super Admin</h1>
         </div>
         <nav className="p-4">
           <ul className="space-y-4">
