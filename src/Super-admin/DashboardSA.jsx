@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import { AddProduct } from "../Services/allApi";
 // import Sidebar from "./Sidebar";
 
 function DashboardSA() {
@@ -24,16 +25,24 @@ function DashboardSA() {
     }
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async(e) => {
     e.preventDefault();
     console.log("Submitted Menu Item:", menuItem);
-    setMenuItem({
-      name: "",
-      description: "",
-      price: "",
-      image: null,
-    });
+    const DataToApi = {
+      itemName: menuItem.name,
+      itemDescription: menuItem.description,
+      price: menuItem.price,
+    };
+  
     setPreview(null);
+    const username = "admin";
+    const password = "admin123";
+    const reqHeaders = {
+      'Authorization': 'Basic ' + btoa(username + ":" + password)
+    };
+    const res=await AddProduct(DataToApi,reqHeaders)
+    console.log(res);
+    
   };
 
   return (
