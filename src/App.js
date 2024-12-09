@@ -27,7 +27,12 @@ function App() {
           path="settings"
           element={<h1>Settings Section (Dummy Text)</h1>}
         />
+         <Route
+          path="menus"
+          element={<h1>view all menu Section (Dummy Text)</h1>}
+        />
       </Route>
+      
     </Routes>
   );
 }

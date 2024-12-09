@@ -14,6 +14,7 @@ const SidebarSA = ({ isSidebarOpen, toggleSidebar }) => {
     { label: "Add Menu", path: "/dashboard/super-admin/add-menu", icon: "🍽️" },
     { label: "View Restaurants", path: "/dashboard/super-admin/view-restaurants", icon: "🏨" },
     { label: "Settings", path: "/dashboard/super-admin/settings", icon: "⚙️" },
+    { label: "View menus", path: "/dashboard/super-admin/menus", icon: "⚙️" },
   ];
 
   return (
