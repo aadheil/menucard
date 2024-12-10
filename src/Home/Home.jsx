@@ -1,6 +1,6 @@
 import { Icon } from '@iconify/react/dist/iconify.js';
 import React, { useEffect, useState } from 'react';
-import { GetProductList } from '../Services/allApi';
+import { getMenuList } from '../Services/allApi';
 import AddCart from './AddCart';
 
 function Home() {
@@ -9,12 +9,14 @@ function Home() {
   const [selectedType, setSelectedType] = useState('All');
   const [loading, setLoading] = useState(true);
   const [cartItems, setCartItems] = useState([]); // Cart items array
+  const [searchTerm, setSearchTerm] = useState(''); // State for the search term
+  const [priceRange, setPriceRange] = useState({ min: 0, max: 1000 }); // Price range filter
 
   const updateToCart = (id) => {
     setItems(items.map(item =>
       item.id === id ? { ...item, cartCount: 1 } : item
     ));
-    
+
     const selectedItem = items.find(item => item.id === id);
     if (selectedItem) {
       const existingItem = cartItems.find(item => item.id === id);
@@ -28,7 +30,7 @@ function Home() {
     setItems(items.map(item =>
       item.id === id ? { ...item, cartCount: item.cartCount + 1 } : item
     ));
-    
+
     setCartItems(cartItems.map(item =>
       item.id === id ? { ...item, cartCount: item.cartCount + 1 } : item
     ));
@@ -58,7 +60,7 @@ function Home() {
     const reqHeaders = {
       'Authorization': 'Basic ' + btoa(username + ":" + password)
     };
-    const res = await GetProductList(reqHeaders);
+    const res = await getMenuList(reqHeaders);
     const newData = res?.data?.map((item) => ({
       id: item?.id,
       name: item?.itemName,
@@ -85,10 +87,33 @@ function Home() {
     setSelectedType(type);
   };
 
-  const filteredItems = items.filter(item =>
-    (item.category === selectedCategory) &&
-    (selectedType === 'All' || item.type === selectedType)
-  );
+  const handleSearchChange = (e) => {
+    setSearchTerm(e.target.value);
+  };
+
+  const handlePriceChange = (min, max) => {
+    // Ensure both min and max are valid numbers, default to 0 or 1000 if not
+    setPriceRange({
+      min: isNaN(min) || min < 0 ? 0 : min, 
+      max: isNaN(max) || max < 0 ? 1000 : max
+    });
+  };
+
+  const filteredItems = items.filter(item => {
+    const isPriceInRange = (priceRange.min === 0 && priceRange.max === 0) || 
+                           (item.price >= priceRange.min && item.price <= priceRange.max);
+
+    return (
+      item.category === selectedCategory &&
+      (selectedType === 'All' || item.type === selectedType) &&
+      isPriceInRange && // Only apply price filter if valid or the range is 0 to 0
+      (
+        item.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        item.description.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        item.category.toLowerCase().includes(searchTerm.toLowerCase())
+      )
+    );
+  });
 
   const SkeletonLoader = () => (
     <div className="w-full h-auto flex flex-col bg-white rounded-lg shadow-md overflow-hidden transform transition-all duration-300 ease-in-out hover:scale-105 hover:shadow-xl">
@@ -146,6 +171,7 @@ function Home() {
           </div>
         </div>
 
+        {/* Search Bar */}
         <div className="flex w-full justify-center px-3 mt-5">
           <div className="relative w-full flex items-center">
             <Icon
@@ -155,7 +181,31 @@ function Home() {
             <input
               className="w-full rounded-lg p-2 pl-8 border-[#F39C12] border shadow bg-transparent"
               type="text"
-              placeholder="Search"
+              value={searchTerm}
+              onChange={handleSearchChange}
+              placeholder="Search by name, description, or category"
+            />
+          </div>
+        </div>
+
+        {/* Price Filter */}
+        <div className="flex justify-between mt-5 px-3">
+          <div className="text-sm font-semibold text-gray-700">Price Range:</div>
+          <div className="flex items-center gap-3">
+            <input
+              type="number"
+              value={priceRange.min || ""}
+              onChange={(e) => handlePriceChange(Number(e.target.value), priceRange.max)}
+              placeholder="Min"
+              className="w-20 px-2 py-1 border border-gray-300 rounded"
+            />
+            <span>-</span>
+            <input
+              type="number"
+              value={priceRange.max || ""}
+              onChange={(e) => handlePriceChange(priceRange.min, Number(e.target.value))}
+              placeholder="Max"
+              className="w-20 px-2 py-1 border border-gray-300 rounded"
             />
           </div>
         </div>

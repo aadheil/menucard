@@ -4,6 +4,7 @@ import Home from "./Home/Home";
 import DashboardSA from "./Super-admin/DashboardSA";
 import HomeSDashboard from "./Super-admin/HomeSDashboard";
 import ViewMenus from "./Super-admin/ViewMenus"; // Import the new component
+import AddRestaurant from "./Super-admin/AddRestaurant";
 
 function App() {
   return (
@@ -19,12 +20,19 @@ function App() {
         {/* Add Menu Route */}
         <Route path="add-menu" element={<DashboardSA />} />
 
-        {/* Other Routes */}
-        <Route path="view-restaurants" element={<h1>View Restaurants Section</h1>} />
+        {/* View Menus Route */}
+        <Route path="view-menus" element={<ViewMenus />} />
+
+        {/* Add restaurant Route */}
+        <Route path="add-restaurants" element={<AddRestaurant />} />
+
+         {/* view restaurant Route */}
+        <Route path="view-restaurants" element={<h1>view restaurant section</h1>} />
+
+         {/* settings Route */}
         <Route path="settings" element={<h1>Settings Section</h1>} />
 
-        {/* View Menus Route */}
-        <Route path="menus" element={<ViewMenus />} />
+        
       </Route>
     </Routes>
   );

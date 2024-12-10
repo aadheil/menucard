@@ -1,6 +1,6 @@
 import React, { useEffect, useMemo, useState } from "react";
 import Select from "react-select"; // Import react-select for virtualized dropdown
-import { GetProductList, UpdateMenuItem } from "../Services/allApi"; // Only use UpdateMenuItem
+import { getMenuList, updateMenuItem } from "../Services/allApi"; // Only use UpdateMenuItem
 
 function ViewMenus() {
   const [menus, setMenus] = useState([]);
@@ -17,6 +17,7 @@ function ViewMenus() {
 
   const [editingMenu, setEditingMenu] = useState(null); // State to hold the menu being edited
   const [updatedMenus, setUpdatedMenus] = useState([]); // State to hold the list of menus being updated
+  const [searchTerm, setSearchTerm] = useState(""); // State for the search input
 
   useEffect(() => {
     const fetchMenus = async () => {
@@ -27,7 +28,7 @@ function ViewMenus() {
       };
 
       try {
-        const response = await GetProductList(reqHeaders);
+        const response = await getMenuList(reqHeaders);
         if (response?.status === 200) {
           const data = response?.data || [];
           setMenus(data);
@@ -61,6 +62,8 @@ function ViewMenus() {
 
   const filteredMenus = useMemo(() => {
     let filtered = [...menus];
+
+    // Apply filters
     if (filters.restaurantId) {
       filtered = filtered.filter((menu) => menu.restaurantId === filters.restaurantId);
     }
@@ -70,8 +73,26 @@ function ViewMenus() {
     if (filters.foodType) {
       filtered = filtered.filter((menu) => menu.foodType === filters.foodType);
     }
+
+    // Apply search term filter across all columns
+    if (searchTerm) {
+      const lowerCaseSearchTerm = searchTerm.toLowerCase();
+      filtered = filtered.filter((menu) => {
+        return (
+          (menu.itemName?.toLowerCase().includes(lowerCaseSearchTerm)) ||
+          (menu.itemDescription?.toLowerCase().includes(lowerCaseSearchTerm)) ||
+          (menu.price?.toString().toLowerCase().includes(lowerCaseSearchTerm)) ||
+          (menu.totalQuantity?.toString().toLowerCase().includes(lowerCaseSearchTerm)) ||
+          (menu.category?.toLowerCase().includes(lowerCaseSearchTerm)) ||
+          (menu.foodType?.toLowerCase().includes(lowerCaseSearchTerm)) ||
+          (menu.restaurantName?.toLowerCase().includes(lowerCaseSearchTerm)) ||
+          (menu.restaurantId?.toString().toLowerCase().includes(lowerCaseSearchTerm))
+        );
+      });
+    }
+
     return filtered;
-  }, [filters, menus]);
+  }, [filters, menus, searchTerm]); // Add searchTerm as a dependency
 
   const handleFilterChange = (name) => (selectedOption) => {
     setFilters((prevFilters) => ({
@@ -108,7 +129,7 @@ function ViewMenus() {
 
   const handleUpdateMenus = async () => {
     try {
-      const response = await UpdateMenuItem(updatedMenus); // Send updatedMenus array
+      const response = await updateMenuItem(updatedMenus); // Send updatedMenus array
 
       if (response?.status === 204) {
         // Update the menu items in the state after successful update
@@ -148,11 +169,22 @@ function ViewMenus() {
     <div className="p-4">
       <h2 className="text-2xl font-bold text-gray-800 mb-4">Menus</h2>
 
+      {/* Search Section */}
+      <div className="mb-6">
+        <input
+          type="text"
+          placeholder="Search..."
+          value={searchTerm}
+          onChange={(e) => setSearchTerm(e.target.value)}
+          className="p-2 border rounded w-full"
+        />
+      </div>
+
       {/* Filter Section */}
       <div className="flex flex-wrap gap-4 mb-6">
         {/* Restaurant Filter */}
         <div className="flex-1 min-w-[200px] w-full sm:w-auto">
-          <label className="text-sm font-medium text-gray-700">Restaurant</label>
+          <label className="text-sm font-medium text-gray-700">Restaurant ID</label>
           <Select
             name="restaurantId"
             value={filters.restaurantId ? formatSelectOption(filters.restaurantId) : null}
@@ -209,27 +241,27 @@ function ViewMenus() {
               <tr>
                 <th className="px-2 py-2 text-left text-sm font-semibold text-gray-700 sm:px-4">Item Name</th>
                 <th className="px-2 py-2 text-left text-sm font-semibold text-gray-700 sm:px-4">Description</th>
-                <th className="px-2 py-2 text-left text-sm font-semibold text-gray-700 sm:px-4">Price (₹)</th>
+                <th className="px-2 py-2 text-left text-sm font-semibold text-gray-700 sm:px-4">Price</th>
                 <th className="px-2 py-2 text-left text-sm font-semibold text-gray-700 sm:px-4">Quantity</th>
                 <th className="px-2 py-2 text-left text-sm font-semibold text-gray-700 sm:px-4">Category</th>
                 <th className="px-2 py-2 text-left text-sm font-semibold text-gray-700 sm:px-4">Food Type</th>
-                <th className="px-2 py-2 text-left text-sm font-semibold text-gray-700 sm:px-4">Restaurant ID</th>
+                <th className="px-2 py-2 text-left text-sm font-semibold text-gray-700 sm:px-4">Restaurant</th>
                 <th className="px-2 py-2 text-left text-sm font-semibold text-gray-700 sm:px-4">Actions</th>
               </tr>
             </thead>
             <tbody>
               {filteredMenus.map((menu) => (
-                <tr key={menu.id} className="hover:bg-gray-50">
-                  <td className="px-2 py-2 text-sm text-gray-800 sm:px-4">{menu.itemName}</td>
-                  <td className="px-2 py-2 text-sm text-gray-600 sm:px-4">{menu.itemDescription}</td>
-                  <td className="px-2 py-2 text-sm text-gray-800 sm:px-4">₹{menu.price}</td>
-                  <td className="px-2 py-2 text-sm text-gray-800 sm:px-4">{menu.totalQuantity}</td>
-                  <td className="px-2 py-2 text-sm text-gray-800 sm:px-4">{menu.category}</td>
-                  <td className="px-2 py-2 text-sm text-gray-800 sm:px-4">{menu.foodType}</td>
-                  <td className="px-2 py-2 text-sm text-gray-800 sm:px-4">{menu.restaurantId}</td>
-                  <td className="px-2 py-2 text-sm text-gray-800 sm:px-4">
+                <tr key={menu.id}>
+                  <td className="px-4 py-2 text-sm text-gray-800">{menu.itemName}</td>
+                  <td className="px-4 py-2 text-sm text-gray-800">{menu.itemDescription}</td>
+                  <td className="px-4 py-2 text-sm text-gray-800">{menu.price}</td>
+                  <td className="px-4 py-2 text-sm text-gray-800">{menu.totalQuantity}</td>
+                  <td className="px-4 py-2 text-sm text-gray-800">{menu.category}</td>
+                  <td className="px-4 py-2 text-sm text-gray-800">{menu.foodType}</td>
+                  <td className="px-4 py-2 text-sm text-gray-800">{menu.restaurantName}</td>
+                  <td className="px-4 py-2 text-sm text-gray-800">
                     <button
-                      className="text-blue-500"
+                      className="text-blue-600 hover:underline"
                       onClick={() => handleEditClick(menu)}
                     >
                       Edit
@@ -241,9 +273,8 @@ function ViewMenus() {
           </table>
         </div>
       )}
-
-      {/* Edit Menu Modal */}
-      {editingMenu && (
+ {/* Edit Menu Modal */}
+ {editingMenu && (
         <div className="fixed inset-0 bg-gray-500 bg-opacity-50 flex items-center justify-center z-10">
           <div className="bg-white p-6 rounded-lg w-1/3">
             <h3 className="text-xl font-semibold mb-4">Edit Menu</h3>

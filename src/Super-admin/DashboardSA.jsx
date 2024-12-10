@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { AddProduct, GetRestaurantList } from "../Services/allApi";
+import { addMenus, getRestaurantList } from "../Services/allApi";
 
 function DashboardSA() {
   const [menuItems, setMenuItems] = useState([]);
@@ -19,7 +19,7 @@ function DashboardSA() {
   useEffect(() => {
     const fetchRestaurants = async () => {
       try {
-        const res = await GetRestaurantList(); // Assuming this function fetches the list of restaurants
+        const res = await getRestaurantList(); // Assuming this function fetches the list of restaurants
         if (res?.status === 200) {
           console.log("Fetched restaurants:", res.data); // Log the response
           setRestaurants(res.data); // Assuming the response contains the list in res.data
@@ -103,7 +103,7 @@ function DashboardSA() {
     };
 
     try {
-      const res = await AddProduct(menuItems, reqHeaders); // Sending the array of items
+      const res = await addMenus(menuItems, reqHeaders); // Sending the array of items
       if (res?.status === 201) {
         setMessage("Menu items added successfully!");
         setMenuItems([]); // Clear the list after successful submission
