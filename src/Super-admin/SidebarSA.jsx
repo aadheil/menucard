@@ -13,8 +13,8 @@ const SidebarSA = ({ isSidebarOpen, toggleSidebar }) => {
   const menuItems = [
     { label: "Add Menu", path: "/dashboard/super-admin/add-menu", icon: "🍽️" },
     { label: "View Restaurants", path: "/dashboard/super-admin/view-restaurants", icon: "🏨" },
-    { label: "Settings", path: "/dashboard/super-admin/settings", icon: "⚙️" },
-    { label: "View Menus", path: "/dashboard/super-admin/menus", icon: "📜" },  // Updated path
+    { label: "View Menus", path: "/dashboard/super-admin/menus", icon: "📜" },
+    { label: "Settings", path: "/dashboard/super-admin/settings", icon: "⚙️" },  // Updated path
   ];
 
   return (
