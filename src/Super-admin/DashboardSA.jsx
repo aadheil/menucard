@@ -1,5 +1,5 @@
-import React, { useState } from "react";
-import { AddProduct } from "../Services/allApi";
+import React, { useState, useEffect } from "react";
+import { AddProduct, GetRestaurantList } from "../Services/allApi";
 
 function DashboardSA() {
   const [menuItems, setMenuItems] = useState([]);
@@ -7,15 +7,49 @@ function DashboardSA() {
     itemName: "",
     itemDescription: "",
     restaurantId: "",
+    restaurantName: "",
     price: 0,
     totalQuantity: 0,
   });
   const [message, setMessage] = useState("");
   const [activeSection, setActiveSection] = useState("addMenu");
+  const [restaurants, setRestaurants] = useState([]);
+
+  // Fetch restaurants on component mount
+  useEffect(() => {
+    const fetchRestaurants = async () => {
+      try {
+        const res = await GetRestaurantList(); // Assuming this function fetches the list of restaurants
+        if (res?.status === 200) {
+          console.log("Fetched restaurants:", res.data); // Log the response
+          setRestaurants(res.data); // Assuming the response contains the list in res.data
+        } else {
+          setMessage("Failed to fetch restaurants.");
+        }
+      } catch (error) {
+        setMessage("An error occurred while fetching the restaurants.");
+      }
+    };
+
+    fetchRestaurants();
+  }, []);
 
   const handleChange = (e) => {
     const { name, value } = e.target;
-    setNewMenuItem({ ...newMenuItem, [name]: value });
+
+    if (name === "restaurantId") {
+      // Find the selected restaurant and set both restaurantId and restaurantName
+      const selectedRestaurant = restaurants.find(
+        (restaurant) => restaurant.restaurantId === value
+      );
+      setNewMenuItem({
+        ...newMenuItem,
+        [name]: value,
+        restaurantName: selectedRestaurant ? selectedRestaurant.restaurantName : "",
+      });
+    } else {
+      setNewMenuItem({ ...newMenuItem, [name]: value });
+    }
   };
 
   const handleAddMenuItem = () => {
@@ -33,11 +67,20 @@ function DashboardSA() {
       return;
     }
 
-    setMenuItems([...menuItems, { ...newMenuItem, price, totalQuantity }]);
+    setMenuItems([
+      ...menuItems,
+      {
+        ...newMenuItem,
+        price,
+        totalQuantity,
+        restaurantName: newMenuItem.restaurantName,
+      },
+    ]);
     setNewMenuItem({
       itemName: "",
       itemDescription: "",
       restaurantId: "",
+      restaurantName: "",
       price: 0,
       totalQuantity: 0,
     });
@@ -156,16 +199,23 @@ function DashboardSA() {
                   </div>
                 </div>
                 <div>
-                  <label className="block text-sm font-medium text-gray-700">Restaurant ID</label>
-                  <input
-                    type="text"
+                  <label className="block text-sm font-medium text-gray-700">Select Restaurant</label>
+                  <select
                     name="restaurantId"
                     value={newMenuItem.restaurantId}
                     onChange={handleChange}
                     required
                     className="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-[#F39C12]"
-                    placeholder="Enter restaurant ID"
-                  />
+                  >
+                    <option value="" disabled>
+                      Select a restaurant
+                    </option>
+                    {restaurants.map((restaurant) => (
+                      <option key={restaurant.id} value={restaurant.restaurantId}>
+                        {restaurant.restaurantName}
+                      </option>
+                    ))}
+                  </select>
                 </div>
                 <div>
                   <button
@@ -182,7 +232,7 @@ function DashboardSA() {
                 <ul className="list-disc pl-6 mt-2 space-y-2">
                   {menuItems.map((item, index) => (
                     <li key={index} className="text-sm md:text-base">
-                      {item.itemName} - ₹{item.price}, Quantity: {item.totalQuantity}, Restaurant: {item.restaurantId}
+                      {item.itemName} - ₹{item.price}, Quantity: {item.totalQuantity}, Restaurant: {item.restaurantName}
                     </li>
                   ))}
                 </ul>
