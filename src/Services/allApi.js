@@ -19,3 +19,7 @@ export const addRestaurants = async(body,headers) => {
 export const updateMenuItem = async(body,headers )=> {
    return await commonAPI("PATCH",`/api/v1/menus`,body,headers)
 }
+
+export const updateRestaurants = async(body,headers )=> {
+   return await commonAPI("PATCH",`/api/v1/restaurants`,body,headers)
+}

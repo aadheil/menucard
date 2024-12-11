@@ -3,8 +3,9 @@ import { Route, Routes } from "react-router-dom";
 import Home from "./Home/Home";
 import DashboardSA from "./Super-admin/DashboardSA";
 import HomeSDashboard from "./Super-admin/HomeSDashboard";
-import ViewMenus from "./Super-admin/ViewMenus"; // Import the new component
+import ViewMenus from "./Super-admin/ViewMenus"; 
 import AddRestaurant from "./Super-admin/AddRestaurant";
+import ViewRestaurants from "./Super-admin/ViewRestaurants";
 
 function App() {
   return (
@@ -27,7 +28,7 @@ function App() {
         <Route path="add-restaurants" element={<AddRestaurant />} />
 
          {/* view restaurant Route */}
-        <Route path="view-restaurants" element={<h1>view restaurant section</h1>} />
+        <Route path="view-restaurants" element={<ViewRestaurants/>} />
 
          {/* settings Route */}
         <Route path="settings" element={<h1>Settings Section</h1>} />
