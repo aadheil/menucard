@@ -13,7 +13,7 @@ function App() {
     <Routes>
       {/* Main Home Route */}
       <Route path="/" element={<Landing />} />
-      <Route path="/api/v1/menus" element={<Home />} />
+      <Route path="/digital-menus" element={<Home />} />
       {/* Super Admin Dashboard Routes */}
       <Route path="/dashboard/super-admin" element={<HomeSDashboard />}>
         {/* Default Route for the Dashboard */}

@@ -1,8 +1,12 @@
 import { commonAPI } from "./commonApi";
 
- export const getMenuList = async(restaurantId,restaurantName,headers) => {
+ export const getMenuListByRestaurantIdAndRestaurantName = async(restaurantId,restaurantName,headers) => {
     return await commonAPI("GET",`/api/v1/menus?restaurantId=${restaurantId}&restaurantName=${restaurantName}`,"",headers)
  }
+
+ export const getMenuList = async(headers) => {
+   return await commonAPI("GET",`/api/v1/menus`,"",headers)
+}
  
  export const getRestaurantList = async(headers) => {
    return await commonAPI("GET",`/api/v1/restaurants`,"",headers)

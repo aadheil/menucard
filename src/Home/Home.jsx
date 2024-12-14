@@ -1,6 +1,6 @@
 import { Icon } from '@iconify/react/dist/iconify.js';
 import React, { useEffect, useState } from 'react';
-import { getMenuList } from '../Services/allApi';
+import { getMenuListByRestaurantIdAndRestaurantName } from '../Services/allApi';
 import AddCart from './AddCart';
 import { useSearchParams } from 'react-router';
 
@@ -64,7 +64,7 @@ function Home() {
     const reqHeaders = {
       'Authorization': 'Basic ' + btoa(username + ":" + password)
     };
-    const res = await getMenuList(restaurantId,restaurantName,reqHeaders);
+    const res = await getMenuListByRestaurantIdAndRestaurantName(restaurantId,restaurantName,reqHeaders);
     const newData = res?.data?.map((item) => ({
       id: item?.id,
       name: item?.itemName,
