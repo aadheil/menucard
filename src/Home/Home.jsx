@@ -1,5 +1,5 @@
 import { Icon } from '@iconify/react/dist/iconify.js';
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useRef } from 'react';
 import { getMenuListByRestaurantIdAndRestaurantName } from '../Services/allApi';
 import AddCart from './AddCart';
 import { useSearchParams } from 'react-router';
@@ -15,6 +15,20 @@ function Home() {
   const [searchParams] = useSearchParams();
   const restaurantId = searchParams.get('restaurantId');
   const restaurantName = searchParams.get('restaurantName');
+  const [themeColor, setThemeColor] = useState('#10B601'); // Default green color
+  const searchInputRef = useRef(null); // Reference to the search bar input
+
+  const scrollToSearchBar = () => {
+    if (searchInputRef.current) {
+      searchInputRef.current.scrollIntoView({ behavior: 'smooth' });
+      searchInputRef.current.focus(); // Highlight the search bar
+      searchInputRef.current.style.borderColor = '#FF4500'; // Add a temporary highlight color
+      setTimeout(() => {
+        searchInputRef.current.style.borderColor = ''; // Reset the border color after a delay
+      }, 1000); // Adjust timing as needed
+    }
+  };
+
   const updateToCart = (id) => {
     setItems(items.map(item =>
       item.id === id ? { ...item, cartCount: 1 } : item
@@ -99,7 +113,6 @@ function Home() {
   };
 
   const handlePriceChange = (min, max) => {
-    // Ensure both min and max are valid numbers, default to 0 or 1000 if not
     setPriceRange({
       min: isNaN(min) || min < 0 ? 0 : min, 
       max: isNaN(max) || max < 0 ? 1000 : max
@@ -113,7 +126,7 @@ function Home() {
     return (
       item.category === selectedCategory &&
       (selectedType === 'All' || item.type === selectedType) &&
-      isPriceInRange && // Only apply price filter if valid or the range is 0 to 0
+      isPriceInRange &&
       (
         item.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
         item.description.toLowerCase().includes(searchTerm.toLowerCase()) ||
@@ -121,6 +134,29 @@ function Home() {
       )
     );
   });
+
+  const [buttonAnimations, setButtonAnimations] = useState({});
+
+const triggerZoomAnimation = (id, type) => {
+  setButtonAnimations((prev) => ({
+    ...prev,
+    [id]: {
+      ...prev[id],
+      [type]: true,
+    },
+  }));
+
+  setTimeout(() => {
+    setButtonAnimations((prev) => ({
+      ...prev,
+      [id]: {
+        ...prev[id],
+        [type]: false,
+      },
+    }));
+  }, 300); // Match the duration of the CSS animation (0.3s)
+};
+
 
   const SkeletonLoader = () => (
     <div className="w-full h-auto flex flex-col bg-white rounded-lg shadow-md overflow-hidden transform transition-all duration-300 ease-in-out hover:scale-105 hover:shadow-xl">
@@ -146,7 +182,7 @@ function Home() {
     <div className='flex justify-center bg-white min-h-screen w-full'>
       <div className='flex flex-col w-full pb-20'>
         <div><h5 className='px-3 pt-5 pb-3 font-bold text-4xl'>Find delicious items from</h5></div>
-        <div><h5 className='px-2 font-bold text-4xl text-[#F39C12]'>{restaurantName}</h5></div>
+        <div><h5 className='px-2 font-bold text-4xl' style={{ color: themeColor }}>{restaurantName}</h5></div>
 
         <div className='flex flex-row px-3 items-center justify-between'>
           <div className='flex gap-2 pt-3 font-bold items-center text-gray-600'>
@@ -186,10 +222,12 @@ function Home() {
               className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400"
             />
             <input
-              className="w-full rounded-lg p-2 pl-8 border-[#F39C12] border shadow bg-transparent"
+              ref={searchInputRef} // Attach the ref to the search bar
+              className="w-full rounded-lg p-2 pl-8 border shadow bg-transparent"
+              style={{ borderColor: '#10B601' }}
               type="text"
               value={searchTerm}
-              onChange={handleSearchChange}
+              onChange={(e) => setSearchTerm(e.target.value)}
               placeholder="Search by name, description, or category"
             />
           </div>
@@ -233,41 +271,77 @@ function Home() {
                   </div>
                   <div className='flex flex-col w-full'>
                     <div className='flex justify-between items-center mb-2'>
-                      <h1 className='font-semibold text-lg text-gray-800 hover:text-[#F39C12] transition-colors duration-200'>{item.name}</h1>
+                      <h1 className='font-semibold text-lg text-gray-800 transition-colors duration-200'>{item.name}</h1>
                     </div>
                     <div className='mb-2'>
                       <p className='text-sm text-gray-600'>
                         {item.description.slice(0, 60)} 
-                        <span className='font-semibold text-[#F39C12] hover:underline'>{item?.description.length > 60 ? '...more' : ''}</span>
+                        <span className='font-semibold hover:underline'>{item?.description.length > 60 ? '...more' : ''}</span>
                       </p>
                     </div>
 
                     <div className='flex justify-between items-center mt-auto'>
-                      <h1 className='font-semibold text-xl text-[#F39C12]'>&#8377; {item.price}</h1>
+                      <h1 className='font-semibold text-xl'  style={{ color: themeColor }}>&#8377; {item.price}</h1>
 
                       {item?.cartCount === 0 ? (
                         <button
                           onClick={() => updateToCart(item?.id)}
-                          className='px-6 py-2 bg-[#F39C12] text-white rounded-full font-semibold shadow-lg hover:bg-[#e67e22] transition-all duration-300 transform hover:scale-105'
+                          className='px-6 py-2 text-white rounded-full font-semibold shadow-lg hover:bg-[#059669] transition-all duration-300 transform hover:scale-105'
+                          style={{
+                            backgroundColor: themeColor, // Dynamically set background color
+                            transition: 'background-color 0.3s ease', // Smooth transition for hover effect
+                          }}
                         >
                           Add to Cart
                         </button>
                       ) : (
-                        <div className='flex items-center gap-3 border-2 border-[#F39C12] rounded-full p-2'>
-                          <button
-                            onClick={() => minusItems(item?.id)}
-                            className='px-3 py-1 text-[#F39C12] font-semibold rounded-full hover:bg-[#F39C12] hover:text-white transition-all duration-300 transform hover:scale-110'
-                          >
-                            <Icon icon="ic:baseline-minus" />
-                          </button>
-                          <span className='font-semibold text-[#F39C12] text-lg'>{item?.cartCount}</span>
-                          <button
-                            onClick={() => plusItems(item?.id)}
-                            className='px-3 py-1 text-[#F39C12] font-semibold rounded-full hover:bg-[#F39C12] hover:text-white transition-all duration-300 transform hover:scale-110'
-                          >
-                            <Icon icon="ic:baseline-plus" />
-                          </button>
-                        </div>
+                        <div
+                        className="flex items-center gap-3 border-2 rounded-full p-2"
+                        style={{
+                          borderColor: themeColor, // Dynamically set border color from themeColor state
+                        }}
+                      >
+                        <button
+                          onClick={() => {
+                            minusItems(item?.id);
+                            triggerZoomAnimation(item?.id, "minus");
+                          }}
+                          className={`px-3 py-1 font-semibold rounded-full ${
+                            buttonAnimations[item.id]?.minus ? "animate-zoom" : ""
+                          }`}
+                          style={{
+                            color: themeColor, // Set dynamic text color
+                          }}
+                        >
+                          <Icon icon="ic:baseline-minus" />
+                        </button>
+                      
+                        <span
+                          className="font-semibold text-lg"
+                          style={{
+                            color: themeColor, // Set dynamic text color
+                          }}
+                        >
+                          {item?.cartCount}
+                        </span>
+                      
+                        <button
+                          onClick={() => {
+                            plusItems(item?.id);
+                            triggerZoomAnimation(item?.id, "plus");
+                          }}
+                          className={`px-3 py-1 font-semibold rounded-full ${
+                            buttonAnimations[item.id]?.plus ? "animate-zoom" : ""
+                          }`}
+                          style={{
+                            color: themeColor, // Set dynamic text color
+                          }}
+                        >
+                          <Icon icon="ic:baseline-plus" />
+                        </button>
+                      </div>
+                      
+
                       )}
                     </div>
                   </div>
@@ -278,9 +352,12 @@ function Home() {
           )}
         </div>
       </div>
-
-      {/* Pass the cartItems to AddCart component */}
-      <AddCart cartCount={cartItems.length} cartItems={cartItems} />
+        {/* Pass the scroll function to AddCart */}
+        <AddCart
+  cartCount={cartItems.length} // Total unique line item count
+  cartItems={cartItems} // Pass cart items for the popup
+  onSearchIconClick={scrollToSearchBar} // Trigger scroll to search bar
+/>
     </div>
   );
 }
