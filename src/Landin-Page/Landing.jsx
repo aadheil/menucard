@@ -25,16 +25,16 @@ function Landing() {
 
         {/* QR Code Section */}
         <div className="relative group">
-          <div className="bg-white/60 backdrop-blur-lg rounded-3xl p-6 shadow-2xl hover:scale-105 transition-transform duration-300">
+          <div className="rounded-3xl p-6 shadow-2xl hover:scale-105 transition-transform duration-300">
             <img
-              src="https://via.placeholder.com/200"
+              src="https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=https://tablebite.in"
               alt="QR Code"
-              className="h-48 w-48 mx-auto animate-pulse"
+              className="h-48 w-48 mx-auto"
             />
             <p className="text-gray-500 mt-4 text-sm">Scan to explore Tablebite</p>
           </div>
           {/* Glow Effect */}
-          <div className="absolute -inset-4 bg-gradient-to-br from-[#F39C12] via-[#e67e22] to-transparent rounded-3xl blur-xl opacity-50 pointer-events-none"></div>
+          <div className="absolute -inset-4 bg-gradient-to-br from-gray-300 via-gray-200 to-transparent rounded-3xl blur-xl opacity-50 pointer-events-none"></div>
         </div>
       </section>
 
@@ -48,13 +48,12 @@ function Landing() {
         </p>
 
         <div className="mt-12 flex flex-wrap justify-center gap-6 md:gap-12">
-          {/* Feature Cards */}
           {["Effortless Scanning", "Paperless Menus", "Premium Design"].map((feature, index) => (
             <div
               key={index}
               className="bg-white/70 backdrop-blur-md rounded-lg shadow-lg p-6 w-72 text-left hover:shadow-2xl transition-all flex flex-col gap-4 items-start"
             >
-             <Icon icon="fa-solid:check-circle" className="text-3xl text-[#F39C12]" />
+              <Icon icon="fa-solid:check-circle" className="text-3xl text-[#F39C12]" />
               <h3 className="text-2xl font-semibold text-transparent bg-clip-text bg-gradient-to-r from-[#F39C12] to-[#e67e22]">
                 {feature}
               </h3>
@@ -67,6 +66,32 @@ function Landing() {
                     : "Designed for elegance, ensuring a luxurious user experience."
                 }
               </p>
+            </div>
+          ))}
+        </div>
+      </section>
+
+      {/* Co-Founders Section */}
+      <section className="py-16 bg-gradient-to-br from-gray-200 via-gray-100 to-white text-center">
+        <h2 className="text-3xl md:text-5xl font-bold text-gray-900 mb-8">Meet Our Leadership</h2>
+        <p className="text-lg text-gray-600 mb-12 max-w-xl mx-auto">
+          Tablebite is brought to life by a visionary team of co-founders and experts.
+        </p>
+        <div className="flex flex-wrap justify-center gap-8">
+          {[
+            { name: "Dhanesh KJ", role: "Co-Founder" },
+            { name: "Aneesh Edavalath", role: "Co-Founder" },
+            { name: "Jessmon", role: "Co-Founder" },
+            { name: "Mithun Joseph", role: "Partner & CTO" },
+            { name: "Adhil", role: "Partner & CTO" },
+          ].map((member, index) => (
+            <div
+              key={index}
+              className="bg-white rounded-lg shadow-lg p-6 w-64 text-center flex flex-col items-center hover:shadow-2xl transition-all"
+            >
+              <Icon icon="fa-solid:user" className="text-5xl text-[#F39C12] mb-4" />
+              <h3 className="text-xl font-bold text-gray-800">{member.name}</h3>
+              <p className="text-gray-600">{member.role}</p>
             </div>
           ))}
         </div>
