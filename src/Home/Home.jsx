@@ -2,6 +2,7 @@ import { Icon } from '@iconify/react/dist/iconify.js';
 import React, { useEffect, useState } from 'react';
 import { getMenuList } from '../Services/allApi';
 import AddCart from './AddCart';
+import { useSearchParams } from 'react-router';
 
 function Home() {
   const [items, setItems] = useState([]);
@@ -11,7 +12,9 @@ function Home() {
   const [cartItems, setCartItems] = useState([]); // Cart items array
   const [searchTerm, setSearchTerm] = useState(''); // State for the search term
   const [priceRange, setPriceRange] = useState({ min: 0, max: 1000 }); // Price range filter
-
+  const [searchParams] = useSearchParams();
+  const restaurantId = searchParams.get('restaurantId');
+  const restaurantName = searchParams.get('restaurantName');
   const updateToCart = (id) => {
     setItems(items.map(item =>
       item.id === id ? { ...item, cartCount: 1 } : item
@@ -53,6 +56,7 @@ function Home() {
       )
       .filter(item => item.cartCount > 0)); // Remove item if cartCount is 0
   };
+  
 
   const getItems = async () => {
     const username = "admin";
@@ -60,7 +64,7 @@ function Home() {
     const reqHeaders = {
       'Authorization': 'Basic ' + btoa(username + ":" + password)
     };
-    const res = await getMenuList(reqHeaders);
+    const res = await getMenuList(restaurantId,restaurantName,reqHeaders);
     const newData = res?.data?.map((item) => ({
       id: item?.id,
       name: item?.itemName,
@@ -73,6 +77,9 @@ function Home() {
     }));
     setItems(newData);
     setLoading(false);
+    if(res?.status==500){
+      alert('Not found menus with provided restaurant id and restaurant name')
+    }
   };
 
   useEffect(() => {
@@ -99,7 +106,7 @@ function Home() {
     });
   };
 
-  const filteredItems = items.filter(item => {
+  const filteredItems = items?.filter(item => {
     const isPriceInRange = (priceRange.min === 0 && priceRange.max === 0) || 
                            (item.price >= priceRange.min && item.price <= priceRange.max);
 

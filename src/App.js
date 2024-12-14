@@ -6,13 +6,14 @@ import HomeSDashboard from "./Super-admin/HomeSDashboard";
 import ViewMenus from "./Super-admin/ViewMenus"; 
 import AddRestaurant from "./Super-admin/AddRestaurant";
 import ViewRestaurants from "./Super-admin/ViewRestaurants";
+import Landing from "./Landin-Page/Landing";
 
 function App() {
   return (
     <Routes>
       {/* Main Home Route */}
-      <Route path="/" element={<Home />} />
-
+      <Route path="/" element={<Landing />} />
+      <Route path="/api/v1/menus" element={<Home />} />
       {/* Super Admin Dashboard Routes */}
       <Route path="/dashboard/super-admin" element={<HomeSDashboard />}>
         {/* Default Route for the Dashboard */}
