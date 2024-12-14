@@ -7,7 +7,7 @@ import { useSearchParams } from 'react-router';
 function Home() {
   const [items, setItems] = useState([]);
   const [selectedCategory, setSelectedCategory] = useState('Starters');
-  const [selectedType, setSelectedType] = useState('All');
+  const [selectedType, setSelectedType] = useState('Veg');
   const [loading, setLoading] = useState(true);
   const [cartItems, setCartItems] = useState([]); // Cart items array
   const [searchTerm, setSearchTerm] = useState(''); // State for the search term
@@ -17,6 +17,8 @@ function Home() {
   const restaurantName = searchParams.get('restaurantName');
   const [themeColor, setThemeColor] = useState('#10B601'); // Default green color
   const searchInputRef = useRef(null); // Reference to the search bar input
+
+
 
   const scrollToSearchBar = () => {
     if (searchInputRef.current) {
