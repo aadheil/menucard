@@ -146,7 +146,7 @@ function Home() {
     <div className='flex justify-center bg-white min-h-screen w-full'>
       <div className='flex flex-col w-full pb-20'>
         <div><h5 className='px-3 pt-5 pb-3 font-bold text-4xl'>Find delicious items from</h5></div>
-        <div><h5 className='px-2 font-bold text-4xl text-[#F39C12]'>Aswin Restaurant</h5></div>
+        <div><h5 className='px-2 font-bold text-4xl text-[#F39C12]'>{restaurantName}</h5></div>
 
         <div className='flex flex-row px-3 items-center justify-between'>
           <div className='flex gap-2 pt-3 font-bold items-center text-gray-600'>
