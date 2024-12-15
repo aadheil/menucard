@@ -86,7 +86,7 @@ function Home() {
       name: item?.itemName,
       description: item?.itemDescription,
       price: item?.price,
-      image: item?.image ?? 'https://th.bing.com/th/id/OIP.XSCo5S6kP3o-7-jVqH4vGgHaE8?rs=1&pid=ImgDetMain',
+      imageUrl: item?.imageUrl ?? 'https://developers.elementor.com/docs/assets/img/elementor-placeholder-image.png',
       category: item?.category ?? 'Starters',
       cartCount: 0,
       type: item?.type ?? 'Veg',
@@ -94,7 +94,7 @@ function Home() {
     setItems(newData);
     setLoading(false);
     if(res?.status==500){
-      alert('Not found menus with provided restaurant id and restaurant name')
+      alert('No menus found with provided restaurant id and restaurant name')
     }
   };
 
@@ -266,7 +266,7 @@ const triggerZoomAnimation = (id, type) => {
                 <div className='flex flex-row items-start p-3 gap-5'>
                   <div className='w-36 h-36'>
                     <img
-                      src={item.image}
+                      src={item.imageUrl}
                       alt={item.name}
                       className='w-full h-full object-cover rounded-lg shadow-md transition-all duration-300 ease-in-out'
                     />

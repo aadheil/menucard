@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { addMenus, getRestaurantList } from "../Services/allApi";
+import axios from "axios"; // For CDN image upload
 
 function DashboardSA() {
   const [menuItems, setMenuItems] = useState([]);
@@ -10,19 +11,20 @@ function DashboardSA() {
     restaurantName: "",
     price: 0,
     totalQuantity: 0,
+    imageUrl: "", // Added field for image URL
   });
   const [message, setMessage] = useState("");
   const [activeSection, setActiveSection] = useState("addMenu");
   const [restaurants, setRestaurants] = useState([]);
+  const [imageFile, setImageFile] = useState(null); // File selected for upload
 
   // Fetch restaurants on component mount
   useEffect(() => {
     const fetchRestaurants = async () => {
       try {
-        const res = await getRestaurantList(); // Assuming this function fetches the list of restaurants
+        const res = await getRestaurantList();
         if (res?.status === 200) {
-          console.log("Fetched restaurants:", res.data); // Log the response
-          setRestaurants(res.data); // Assuming the response contains the list in res.data
+          setRestaurants(res.data);
         } else {
           setMessage("Failed to fetch restaurants.");
         }
@@ -38,7 +40,6 @@ function DashboardSA() {
     const { name, value } = e.target;
 
     if (name === "restaurantId") {
-      // Find the selected restaurant and set both restaurantId and restaurantName
       const selectedRestaurant = restaurants.find(
         (restaurant) => restaurant.restaurantId === value
       );
@@ -52,21 +53,53 @@ function DashboardSA() {
     }
   };
 
+  const handleImageUpload = async () => {
+    if (!imageFile) {
+      setMessage("Please select an image before uploading.");
+      return;
+    }
+  
+    try {
+      // Upload to Cloudinary
+      const formData = new FormData();
+      formData.append("file", imageFile);
+      formData.append("upload_preset", "menu-item"); // Replace with your actual preset
+      const response = await axios.post("https://api.cloudinary.com/v1_1/dsybk6rge/image/upload", formData);
+  
+      if (response?.data?.secure_url) {
+        // Set the imageUrl in newMenuItem
+        setNewMenuItem((prevItem) => ({
+          ...prevItem,
+          imageUrl: response.data.secure_url, // Set the uploaded image URL
+        }));
+        setMessage("Image uploaded successfully!");
+        console.log("Uploaded Image URL:", response.data.secure_url);
+      } else {
+        setMessage("Failed to upload image.");
+      }
+    } catch (error) {
+      setMessage("An error occurred during image upload.");
+      console.error(error);
+    }
+  };
+  
+
   const handleAddMenuItem = () => {
     const price = parseFloat(newMenuItem.price);
     const totalQuantity = parseInt(newMenuItem.totalQuantity, 10);
-
+  
     if (
       !newMenuItem.itemName ||
       !newMenuItem.itemDescription ||
       isNaN(price) ||
       isNaN(totalQuantity) ||
-      !newMenuItem.restaurantId
+      !newMenuItem.restaurantId ||
+      !newMenuItem.imageUrl // Ensure the imageUrl is set
     ) {
       setMessage("Please fill all fields correctly before adding.");
       return;
     }
-
+  
     setMenuItems([
       ...menuItems,
       {
@@ -76,6 +109,8 @@ function DashboardSA() {
         restaurantName: newMenuItem.restaurantName,
       },
     ]);
+  
+    // Reset form fields
     setNewMenuItem({
       itemName: "",
       itemDescription: "",
@@ -83,9 +118,12 @@ function DashboardSA() {
       restaurantName: "",
       price: 0,
       totalQuantity: 0,
+      imageUrl: "",
     });
+    setImageFile(null); // Reset file input
     setMessage("");
   };
+  
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -117,9 +155,11 @@ function DashboardSA() {
 
   return (
     <div className="flex flex-col md:flex-row min-h-screen bg-gray-100">
-      {/* Main Content Area */}
+      
+       {/* Main Content Area */}
       <div className="flex-1 flex flex-col">
-        {/* Top Bar */}
+
+         {/* Top Bar */}
         <header className="flex flex-wrap items-center justify-between bg-white shadow-md p-4">
           <h2 className="text-xl font-semibold text-gray-800">Dashboard Overview</h2>
           <div className="flex flex-grow md:ml-0 items-center gap-4 justify-end">
@@ -128,9 +168,9 @@ function DashboardSA() {
             </button>
           </div>
         </header>
-
-        {/* Dashboard Content */}
         <main className="flex-1 p-4 md:p-6 bg-gray-100">
+
+          {/* Dashboard Content */}
           {activeSection === "addMenu" && (
             <div className="bg-white p-4 md:p-6 rounded-lg shadow-md">
               <h3 className="text-lg md:text-2xl font-semibold text-gray-800 mb-4">
@@ -218,6 +258,21 @@ function DashboardSA() {
                   </select>
                 </div>
                 <div>
+                  <label className="block text-sm font-medium text-gray-700">Upload Image</label>
+                  <input
+                    type="file"
+                    onChange={(e) => setImageFile(e.target.files[0])}
+                    className="w-full px-4 py-2 border rounded-lg focus:outline-none"
+                  />
+                  <button
+                    type="button"
+                    onClick={handleImageUpload}
+                    className="mt-2 px-4 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600"
+                  >
+                    Upload Image
+                  </button>
+                </div>
+                <div>
                   <button
                     type="button"
                     onClick={handleAddMenuItem}
@@ -232,7 +287,8 @@ function DashboardSA() {
                 <ul className="list-disc pl-6 mt-2 space-y-2">
                   {menuItems.map((item, index) => (
                     <li key={index} className="text-sm md:text-base">
-                      {item.itemName} - ₹{item.price}, Quantity: {item.totalQuantity}, Restaurant: {item.restaurantName}
+                      {item.itemName} - ₹{item.price}, Quantity: {item.totalQuantity}, Restaurant:{" "}
+                      {item.restaurantName}, Image: {item.imageUrl ? "Uploaded" : "Not uploaded"}
                     </li>
                   ))}
                 </ul>
