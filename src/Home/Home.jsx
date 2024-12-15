@@ -1,6 +1,6 @@
 import { Icon } from '@iconify/react/dist/iconify.js';
 import React, { useEffect, useState, useRef } from 'react';
-import { getMenuListByRestaurantIdAndRestaurantName } from '../Services/allApi';
+import { getMenuListByRestaurantIdAndRestaurantName, getRestaurantColorTheme} from '../Services/allApi';
 import AddCart from './AddCart';
 import { useSearchParams } from 'react-router';
 
@@ -13,18 +13,63 @@ function Home() {
   const [searchTerm, setSearchTerm] = useState(''); // State for the search term
   const [priceRange, setPriceRange] = useState({ min: 0, max: 1000 }); // Price range filter
   const [searchParams] = useSearchParams();
+
   const restaurantId = searchParams.get('restaurantId');
   const restaurantName = searchParams.get('restaurantName');
-  const [themeColor, setThemeColor] = useState('#10B601'); // Default green color
+
+  const [themeColor, setThemeColor] = useState(() => {
+    // Load cached theme color from localStorage
+    const cachedTheme = localStorage.getItem('themeColor');
+    return cachedTheme ? JSON.parse(cachedTheme) : { backgroundColor: "#f4f4f4", textColor: "#000000" }; // Default theme
+  }); // Default green color
   const searchInputRef = useRef(null); // Reference to the search bar input
 
+  useEffect(() => {
+    fetchColorTheme();
+  }, []);
+
+  const getHeaders = () => {
+    const username = "admin";
+    const password = "admin123";
+    return {
+      'Authorization': 'Basic ' + btoa(`${username}:${password}`),
+    };
+  };
+
+  const fetchColorTheme = async (headers) => {
+    try {
+      const res = await getRestaurantColorTheme(restaurantId, headers);
+      if (res?.status === 500) {
+        alert('Failed to fetch the restaurant color theme.');
+        return;
+      }
+      const newTheme = res?.data || {};
+      setThemeColor(newTheme);
+      // Cache the fetched theme
+      localStorage.setItem('themeColor', JSON.stringify(newTheme));
+    } catch (error) {
+      console.error('Error fetching restaurant color theme:', error);
+      alert("Failed to fetch the color theme. Please try again later.");
+    }
+  };
+
+  useEffect(() => {
+    const fetchData = async () => {
+      setLoading(true);
+      const headers = getHeaders();
+      await fetchColorTheme(headers);
+      setLoading(false);
+    };
+
+    fetchData();
+  }, []);
 
 
   const scrollToSearchBar = () => {
     if (searchInputRef.current) {
       searchInputRef.current.scrollIntoView({ behavior: 'smooth' });
       searchInputRef.current.focus(); // Highlight the search bar
-      searchInputRef.current.style.borderColor = '#FF4500'; // Add a temporary highlight color
+      searchInputRef.current.style.borderColor = themeColor; // Add a temporary highlight color
       setTimeout(() => {
         searchInputRef.current.style.borderColor = ''; // Reset the border color after a delay
       }, 1000); // Adjust timing as needed
@@ -97,10 +142,12 @@ function Home() {
       alert('No menus found with provided restaurant id and restaurant name')
     }
   };
+  
 
   useEffect(() => {
     getItems();
   }, []);
+
 
   const handleCategoryChange = (category) => {
     setSelectedCategory(category);
@@ -226,7 +273,7 @@ const triggerZoomAnimation = (id, type) => {
             <input
               ref={searchInputRef} // Attach the ref to the search bar
               className="w-full rounded-lg p-2 pl-8 border shadow bg-transparent"
-              style={{ borderColor: '#10B601' }}
+              style={{ borderColor: themeColor }}
               type="text"
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
@@ -356,9 +403,10 @@ const triggerZoomAnimation = (id, type) => {
       </div>
         {/* Pass the scroll function to AddCart */}
         <AddCart
-  cartCount={cartItems.length} // Total unique line item count
-  cartItems={cartItems} // Pass cart items for the popup
-  onSearchIconClick={scrollToSearchBar} // Trigger scroll to search bar
+        themeColor={themeColor}
+        cartCount={cartItems.length} // Total unique line item count
+        cartItems={cartItems} // Pass cart items for the popup
+        onSearchIconClick={scrollToSearchBar} // Trigger scroll to search bar
 />
     </div>
   );

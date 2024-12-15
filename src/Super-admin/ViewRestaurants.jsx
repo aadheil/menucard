@@ -13,6 +13,7 @@ function ViewRestaurants() {
     description: "",
     restaurantId: "",
     location: "",
+    colorTheme:"",
   }); // State to store the input values for editing
   const [searchQuery, setSearchQuery] = useState(""); // State for search input
 
@@ -52,6 +53,7 @@ function ViewRestaurants() {
       description: restaurant.description,
       restaurantId: restaurant.restaurantId,
       location: restaurant.location,
+      colorTheme: restaurant.colorTheme,
     });
   };
 
@@ -96,7 +98,8 @@ function ViewRestaurants() {
         restaurant.restaurantName.toLowerCase().includes(query.toLowerCase()) ||
         restaurant.description.toLowerCase().includes(query.toLowerCase()) ||
         restaurant.location.toLowerCase().includes(query.toLowerCase()) ||
-        restaurant.restaurantId.toString().includes(query)
+        restaurant.restaurantId.toString().includes(query) ||
+        restaurant.colorTheme.toString().includes(query)
       );
       setFilteredRestaurants(filtered);
     }
@@ -147,6 +150,9 @@ function ViewRestaurants() {
             <th className="px-2 py-2 text-left text-sm font-semibold text-gray-700 sm:px-4">
               Actions
             </th>
+            <th className="px-2 py-2 text-left text-sm font-semibold text-gray-700 sm:px-4">
+              Theme Color
+            </th>
           </tr>
         </thead>
         <tbody>
@@ -156,6 +162,7 @@ function ViewRestaurants() {
               <td className="px-4 py-2 text-sm text-gray-800">{restaurant.description}</td>
               <td className="px-4 py-2 text-sm text-gray-800">{restaurant.location}</td>
               <td className="px-4 py-2 text-sm text-gray-800">{restaurant.restaurantId}</td>
+              <td className="px-4 py-2 text-sm text-gray-800">{restaurant.colorTheme}</td>
               <td className="px-4 py-2 text-sm text-gray-800">
                 <button
                   onClick={() => handleEditClick(restaurant)}
@@ -203,6 +210,17 @@ function ViewRestaurants() {
                 value={restaurantData.location}
                 onChange={(e) =>
                   setRestaurantData({ ...restaurantData, location: e.target.value })
+                }
+                className="mt-1 px-4 py-2 border border-gray-300 rounded-md w-full"
+              />
+            </div>
+            <div className="mb-4">
+              <label className="block text-sm font-medium text-gray-700">Theme color</label>
+              <input
+                type="text"
+                value={restaurantData.colorTheme}
+                onChange={(e) =>
+                  setRestaurantData({ ...restaurantData, colorTheme: e.target.value })
                 }
                 className="mt-1 px-4 py-2 border border-gray-300 rounded-md w-full"
               />

@@ -1,9 +1,8 @@
 import React, { useState } from 'react';
 import { Icon } from '@iconify/react';
 
-function AddCart({ cartCount = 0, cartItems = [], onSearchIconClick  }) {
+function AddCart({ cartCount = 0, cartItems = [], onSearchIconClick, themeColor }) {
   const [isPopupVisible, setPopupVisible] = useState(false);
-  const [themeColor, setThemeColor] = useState('#10B601'); // Example dynamic theme color
   const [selectedMenu, setSelectedMenu] = useState('Home'); // Track selected menu (default: Home)
 
   const togglePopup = () => {
@@ -33,21 +32,21 @@ function AddCart({ cartCount = 0, cartItems = [], onSearchIconClick  }) {
             <span className="text-sm mt-1">Home</span>
           </div>
 
+        
           {/* Search Icon */}
-          {/* Search Icon */}
-<div
-  className="flex flex-col items-center cursor-pointer p-3 transition-all duration-300 ease-in-out hover:scale-110"
-  style={{ color: selectedMenu === 'Search' ? themeColor : '#808080' }}
-  onClick={(e) => {
-    handleMenuSelect('Search', e);
-    if (typeof onSearchIconClick === 'function') {
-      onSearchIconClick(); // Call the scroll function passed as a prop
-    }
-  }}
->
-  <Icon icon="mdi:magnify" className="text-3xl" />
-  <span className="text-sm mt-1">Search</span>
-</div>
+            <div
+              className="flex flex-col items-center cursor-pointer p-3 transition-all duration-300 ease-in-out hover:scale-110"
+              style={{ color: selectedMenu === 'Search' ? themeColor : '#808080' }}
+              onClick={(e) => {
+                handleMenuSelect('Search', e);
+                if (typeof onSearchIconClick === 'function') {
+                  onSearchIconClick(); // Call the scroll function passed as a prop
+                }
+              }}
+            >
+              <Icon icon="mdi:magnify" className="text-3xl" />
+              <span className="text-sm mt-1">Search</span>
+            </div>
 
           {/* Profile Icon */}
           <div

@@ -6,6 +6,7 @@ const AddRestaurant = () => {
     restaurantName: "",
     description: "",
     location: "",
+    colorTheme:"",
   });
   const [message, setMessage] = useState("");
 
@@ -19,7 +20,7 @@ const AddRestaurant = () => {
     setMessage(""); // Reset any existing messages
 
     // Validate fields
-    if (!newRestaurant.restaurantName || !newRestaurant.description || !newRestaurant.location) {
+    if (!newRestaurant.restaurantName || !newRestaurant.description || !newRestaurant.location || !newRestaurant.colorTheme) {
       setMessage("Please fill all fields correctly before adding the restaurant.");
       return;
     }
@@ -28,7 +29,7 @@ const AddRestaurant = () => {
       const res = await addRestaurants([newRestaurant]); // Sending an array with one restaurant object
       if (res?.status === 201) {
         setMessage("Restaurant added successfully!");
-        setNewRestaurant({ restaurantName: "", description: "", location: "" });
+        setNewRestaurant({ restaurantName: "", description: "", location: "", colorTheme: "" });
       } else {
         setMessage("Failed to add the restaurant. Please try again.");
       }
@@ -93,6 +94,20 @@ const AddRestaurant = () => {
             required
             className="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-[#F39C12]"
             placeholder="Enter restaurant location"
+          />
+        </div>
+
+         {/* Color theme Field */}
+         <div>
+          <label className="block text-sm font-medium text-gray-700">Color theme</label>
+          <input
+            type="text"
+            name="colorTheme"
+            value={newRestaurant.colorTheme}
+            onChange={handleChange}
+            required
+            className="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-[#F39C12]"
+            placeholder="Enter color theme"
           />
         </div>
 
