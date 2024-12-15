@@ -114,6 +114,7 @@ function ViewMenus() {
         category: menu.category,
         foodType: menu.foodType,
         restaurantId: menu.restaurantId,
+        imageUrl:menu.imageUrl,
       },
     ]);
   };
@@ -239,6 +240,7 @@ function ViewMenus() {
           <table className="min-w-full table-auto bg-white border border-gray-200 rounded-lg shadow-md">
             <thead className="bg-gray-100">
               <tr>
+                <th className="px-2 py-2 text-left text-sm font-semibold text-gray-700 sm:px-4">Item Image</th>
                 <th className="px-2 py-2 text-left text-sm font-semibold text-gray-700 sm:px-4">Item Name</th>
                 <th className="px-2 py-2 text-left text-sm font-semibold text-gray-700 sm:px-4">Description</th>
                 <th className="px-2 py-2 text-left text-sm font-semibold text-gray-700 sm:px-4">Price</th>
@@ -252,6 +254,17 @@ function ViewMenus() {
             <tbody>
               {filteredMenus.map((menu) => (
                 <tr key={menu.id}>
+                  <td className="px-4 py-2 text-sm text-gray-800">
+                      {menu.imageUrl ? (
+                        <img
+                          src={menu.imageUrl}
+                          alt={menu.itemName || "Menu Item"}
+                          className="w-16 h-16 object-cover rounded"
+                        />
+                      ) : (
+                        <span>No Image</span>
+                      )}
+                    </td>
                   <td className="px-4 py-2 text-sm text-gray-800">{menu.itemName}</td>
                   <td className="px-4 py-2 text-sm text-gray-800">{menu.itemDescription}</td>
                   <td className="px-4 py-2 text-sm text-gray-800">{menu.price}</td>
