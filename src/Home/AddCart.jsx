@@ -1,127 +1,105 @@
 import React, { useState } from 'react';
-import { Icon } from '@iconify/react';
 
-function AddCart({ cartCount = 0, cartItems = [], onSearchIconClick, themeColor }) {
-  const [isPopupVisible, setPopupVisible] = useState(false);
-  const [selectedMenu, setSelectedMenu] = useState('Home'); // Track selected menu (default: Home)
+function AddCart({ cartCount = 0, cartItems = [], onViewCart, themeColor }) {
+  const [isModalVisible, setIsModalVisible] = useState(false);
 
-  const togglePopup = () => {
-    setPopupVisible(!isPopupVisible);
+  
+  const handleViewCart = () => {
+    // If you have an external view cart logic, call it here:
+    if (typeof onViewCart === 'function') {
+      onViewCart();
+    }
+    // Otherwise, just show the modal
+    setIsModalVisible(true);
   };
 
-  const handleMenuSelect = (menuName, event) => {
-    event.preventDefault(); // Prevent default scroll behavior
-    setSelectedMenu(menuName); // Update selected menu
-  };
+  if (cartCount === 0) {
+    return null;
+  }
+
+  const totalPrice = cartItems.reduce((acc, item) => acc + (item.price * item.cartCount), 0);
 
   return (
     <>
-      {/* Fixed bottom navigation */}
-      <div className="fixed bottom-0 w-full h-20 bg-white drop-shadow-2xl z-50 flex items-center justify-around px-4 rounded-t-lg border-t border-gray-200">
-        <div className="flex justify-between w-full max-w-lg items-center">
-          
-          {/* Home Icon */}
-          <div
-            className="flex flex-col items-center cursor-pointer p-3 transition-all duration-300 ease-in-out hover:scale-110"
-            style={{
-              color: selectedMenu === 'Home' ? themeColor : '#808080', // Apply themeColor if selected, otherwise gray
-            }}
-            onClick={(e) => handleMenuSelect('Home', e)}
+      <div
+        className="fixed bottom-0 w-full z-50 flex items-center justify-between px-4 py-3"
+        style={{ backgroundColor: themeColor }}
+      >
+        <span className="text-white text-sm font-medium">
+          {cartCount === 1 ? "1 item added" : `${cartCount} items added`}
+        </span>
+        <button
+          className="text-white text-sm font-semibold flex items-center"
+          onClick={handleViewCart}
+        >
+          VIEW BASKET
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            fill="currentColor"
+            className="w-4 h-4 ml-1"
+            viewBox="0 0 16 16"
           >
-            <Icon icon="mdi:home" className="text-3xl" />
-            <span className="text-sm mt-1">Home</span>
-          </div>
-
-        
-          {/* Search Icon */}
-            <div
-              className="flex flex-col items-center cursor-pointer p-3 transition-all duration-300 ease-in-out hover:scale-110"
-              style={{ color: selectedMenu === 'Search' ? themeColor : '#808080' }}
-              onClick={(e) => {
-                handleMenuSelect('Search', e);
-                if (typeof onSearchIconClick === 'function') {
-                  onSearchIconClick(); // Call the scroll function passed as a prop
-                }
-              }}
-            >
-              <Icon icon="mdi:magnify" className="text-3xl" />
-              <span className="text-sm mt-1">Search</span>
-            </div>
-
-          {/* Profile Icon */}
-          <div
-            className="flex flex-col items-center cursor-pointer p-3 transition-all duration-300 ease-in-out hover:scale-110"
-            style={{
-              color: selectedMenu === 'Profile' ? themeColor : '#808080', // Apply themeColor if selected, otherwise gray
-            }}
-            onClick={(e) => handleMenuSelect('Profile', e)}
-          >
-            <Icon icon="mdi:account" className="text-3xl" />
-            <span className="text-sm mt-1">Profile</span>
-          </div>
-
-          {/* Cart Icon */}
-          <div
-            className="flex flex-col items-center cursor-pointer p-3 transition-all duration-300 ease-in-out hover:scale-110 relative"
-            style={{
-              color: selectedMenu === 'Cart' ? themeColor : '#808080', // Apply themeColor if selected, otherwise gray
-            }}
-            onClick={(e) => {
-              handleMenuSelect('Cart', e);
-              togglePopup();
-            }}
-          >
-            <Icon icon="fluent:cart-24-regular" className="text-3xl" />
-            {cartCount > 0 && (
-              <span
-                className="absolute top-0 right-0 text-xs text-white rounded-full w-5 h-5 flex items-center justify-center"
-                style={{
-                  backgroundColor: themeColor || '#FF4500', // Dynamic color fallback to red if themeColor is not provided
-                }}
-              >
-                {cartCount}
-              </span>
-            )}
-            <span className="text-sm mt-1">Cart</span>
-          </div>
-        </div>
+            <path d="M2 2a.5.5 0 010-1h2a.5.5 0 01.495.435L4.89 2H14.5a.5.5 0 01.491.592l-1.5 7a.5.5 0 01-.465.408H5.13l-.02.08a2 2 0 101.912 2.49h5.414a.5.5 0 010 1H7.024a3 3 0 11-2.493-3.871l1.365-5.308a.5.5 0 01.49-.408H14.5a.5.5 0 010 1H4.83l-.832 3.24L3.28 2H2z" />
+          </svg>
+        </button>
       </div>
 
-      {/* Cart Popup */}
-      {isPopupVisible && (
-        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-          <div className="bg-white rounded-lg shadow-lg w-4/5 max-w-lg p-4">
-            <h2 className="text-lg font-bold mb-4">Your Cart</h2>
+      {/* Modal to show cart items */}
+      {isModalVisible && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-40">
+          <div className="bg-white rounded-lg shadow-lg w-11/12 max-w-md p-4 relative">
+            <h2 className="text-lg font-bold mb-4">Your Basket</h2>
             {cartItems.length > 0 ? (
-              <ul>
+              <ul className="space-y-3">
                 {cartItems.map((item, index) => (
-                  <li key={index} className="flex justify-between items-center mb-3">
-                    <div>
-                      <p className="text-md font-medium">{item.name}</p>
-                      <p className="text-sm text-gray-500">Quantity: {item.quantity}</p>
+                  <li key={index} className="flex justify-between items-center border-b border-gray-200 pb-2">
+                    <div className="flex flex-col">
+                      <span className="font-medium text-sm">{item.name}</span>
+                      <span className="text-xs text-gray-500">Qty: {item.cartCount}</span>
                     </div>
-                    <p className="text-md font-bold">${item.price.toFixed(2)}</p>
+                    <span className="font-semibold text-sm">
+                      ₹{(item.price * item.cartCount).toFixed(2)}
+                    </span>
                   </li>
                 ))}
               </ul>
             ) : (
-              <p className="text-center text-gray-500">Your cart is empty.</p>
+              <p className="text-gray-500 text-center py-4">Your cart is empty.</p>
             )}
-            <div className="flex justify-end mt-4">
-              <button
-                className="bg-gray-300 px-4 py-2 rounded-md mr-2"
-                onClick={togglePopup}
-              >
-                Close
-              </button>
-              <button
-                className="px-4 py-2 rounded-md text-white"
-                style={{ backgroundColor: themeColor }} // Dynamic checkout button
-                onClick={() => alert('Proceeding to Checkout...')}
-              >
-                Checkout
-              </button>
-            </div>
+
+            {cartItems.length > 0 && (
+              <div className="flex justify-between items-center mt-4">
+                <span className="font-semibold text-sm">Total: ₹{totalPrice.toFixed(2)}</span>
+                <button
+                  className="px-4 py-2 rounded-md text-white"
+                  style={{ backgroundColor: themeColor }}
+                  onClick={() => alert('Proceeding to Checkout...')}
+                >
+                  Checkout
+                </button>
+              </div>
+            )}
+
+            <button
+              className="absolute top-2 right-2 text-gray-500 hover:text-gray-700"
+              onClick={() => setIsModalVisible(false)}
+            >
+              <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
+                <path
+                  fillRule="evenodd"
+                  d="M4.293 4.293a1 1 0 
+                  011.414 0L10 8.586l4.293-4.293a1 
+                  1 0 111.414 1.414L11.414 
+                  10l4.293 4.293a1 1 0 
+                  01-1.414 1.414L10 
+                  11.414l-4.293 4.293a1 1 0 
+                  01-1.414-1.414L8.586 
+                  10 4.293 5.707a1 1 0 
+                  010-1.414z"
+                  clipRule="evenodd"
+                />
+              </svg>
+            </button>
           </div>
         </div>
       )}

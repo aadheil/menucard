@@ -3,120 +3,147 @@ import { Icon } from "@iconify/react/dist/iconify.js";
 
 function Landing() {
   return (
-    <div className="min-h-screen bg-gradient-to-br from-gray-100 via-gray-50 to-gray-200 text-gray-800 flex flex-col">
-      {/* Navbar */}
-      <nav className="fixed top-0 left-0 w-full backdrop-blur-lg bg-white/30 shadow-md z-10 px-6 md:px-12 py-4 flex justify-between items-center">
-        <h1 className="text-3xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-[#10B601] to-[#50D14F]">
-          Tablebite
-        </h1>
-        <button className="px-6 py-2 bg-gradient-to-r from-[#10B601] to-[#50D14F] text-white font-medium rounded-full shadow-lg hover:shadow-xl transition-all flex items-center gap-2">
-          Get Started <Icon icon="bi:arrow-right" className="w-5 h-5" />
-        </button>
-      </nav>
+    <div className="min-h-screen text-gray-800 flex flex-col">
+      {/* Header Section */}
+      <header className="w-full bg-gray-900 text-white px-6 md:px-12 py-4 flex justify-between items-center">
+        <h1 className="text-3xl font-bold text-red-600">tablebite.in</h1>
+        <div className="flex gap-4">
+          <button className="px-4 py-2 bg-gray-700 rounded hover:bg-gray-600 transition">
+            LOGIN
+          </button>
+          <button className="px-4 py-2 bg-red-500 rounded hover:bg-red-600 transition">
+            CONTACT
+          </button>
+        </div>
+      </header>
 
       {/* Hero Section */}
-      <section className="flex flex-col items-center justify-center px-6 md:px-16 mt-20 md:mt-28 text-center space-y-8">
-        <h1 className="text-4xl md:text-6xl font-extrabold leading-tight max-w-4xl text-transparent bg-clip-text bg-gradient-to-r from-[#10B601] to-[#50D14F]">
+      <section className="bg-gray-900 text-white py-16 px-6 md:px-12 text-center">
+        <h1 className="text-4xl md:text-6xl font-bold mb-4">
           Redefining Luxury Dining Experiences
         </h1>
-        <p className="text-lg md:text-xl text-gray-600 max-w-lg">
-          Transform your dining with Tablebite. Scan the QR code and enjoy a seamless, paperless menu experience tailored for luxury.
+        <p className="text-lg md:text-xl mb-8">
+          Transform your dining with Tablebite. Scan the QR code and enjoy a
+          seamless, paperless menu experience tailored for luxury.
         </p>
 
-        {/* QR Code Section */}
-        <div className="relative group">
-          <div className="rounded-3xl p-6 shadow-2xl hover:scale-105 transition-transform duration-300">
+        {/* Stylish QR Code */}
+        <div className="flex justify-center items-center mt-8">
+          <div className="relative p-4 bg-white rounded-2xl shadow-2xl border-4 border-red-500 hover:scale-105 transition-transform duration-300">
             <img
-              src="https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=https://tablebite.in"
-              alt="QR Code"
-              className="h-48 w-48 mx-auto"
+              src="https://api.qrserver.com/v1/create-qr-code/?size=250x250&data=https://tablebite.in"
+              alt="Scan QR Code"
+              className="w-48 h-48 rounded-md"
             />
-            <p className="text-gray-500 mt-4 text-sm">Scan to explore Tablebite</p>
+            <p className="text-gray-600 mt-4 text-sm font-medium">
+              Scan to Explore Tablebite
+            </p>
           </div>
-          {/* Glow Effect */}
-          <div className="absolute -inset-4 bg-gradient-to-br from-gray-300 via-gray-200 to-transparent rounded-3xl blur-xl opacity-50 pointer-events-none"></div>
         </div>
       </section>
 
       {/* Features Section */}
-      <section className="w-full py-16 px-6 md:px-16 bg-gradient-to-br from-white via-gray-50 to-gray-200 text-center">
-        <h2 className="text-3xl md:text-5xl font-bold text-gray-900 mb-6">
-          Why Choose Tablebite?
-        </h2>
-        <p className="text-gray-600 max-w-3xl mx-auto text-lg">
-          Our platform offers a premium dining experience that combines modern technology with elegance.
-        </p>
-
-        <div className="mt-12 flex flex-wrap justify-center gap-6 md:gap-12">
-          {["Effortless Scanning", "Paperless Menus", "Premium Design"].map((feature, index) => (
+      <section className="py-16 px-6 md:px-12 bg-white text-gray-900 text-center">
+        <h2 className="text-3xl md:text-5xl font-bold mb-8">Why Choose Tablebite?</h2>
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+          {[
+            {
+              title: "Digitally available",
+              description:
+                "Your customers can access the menu on their own device at any time, without any app install.",
+              icon: "fa-solid:qrcode",
+            },
+            {
+              title: "Multiple menu cards",
+              description:
+                "Add multiple menus for your takeaway, catering, wines, drinks, desserts, and more.",
+              icon: "fa-solid:book-open",
+            },
+            {
+              title: "Menu on your website",
+              description:
+                "Integrate the menu into your own website, letting your customers view the menu seamlessly.",
+              icon: "fa-solid:globe",
+            },
+            {
+              title: "Change your menu at any time",
+              description:
+                "Make changes to your menu in real-time and notify customers about unavailability or updates.",
+              icon: "fa-solid:clock",
+            },
+            {
+              title: "Design your menu",
+              description:
+                "Personalize your menu with unique styles, colors, and layouts to match your branding.",
+              icon: "fa-solid:palette",
+            },
+            {
+              title: "Filter on allergens and preferences",
+              description:
+                "Allow customers to filter allergens and dietary preferences to improve their experience.",
+              icon: "fa-solid:filter",
+            },
+          ].map((feature, idx) => (
             <div
-              key={index}
-              className="bg-white/70 backdrop-blur-md rounded-lg shadow-lg p-6 w-72 text-left hover:shadow-2xl transition-all flex flex-col gap-4 items-start"
+              key={idx}
+              className="p-6 border border-gray-200 rounded-lg shadow-lg hover:shadow-2xl transition"
             >
-              <Icon icon="fa-solid:check-circle" className="text-3xl text-[#10B601]" />
-              <h3 className="text-2xl font-semibold text-transparent bg-clip-text bg-gradient-to-r from-[#10B601] to-[#50D14F]">
-                {feature}
-              </h3>
-              <p className="text-gray-600">
-                {
-                  feature === "Effortless Scanning"
-                    ? "Quickly scan a QR code to access a full menu on your device."
-                    : feature === "Paperless Menus"
-                    ? "Eliminate paper waste while enjoying a premium dining interface."
-                    : "Designed for elegance, ensuring a luxurious user experience."
-                }
-              </p>
+              <Icon
+                icon={feature.icon}
+                className="text-4xl text-red-500 mb-4"
+              />
+              <h3 className="text-2xl font-semibold mb-2">{feature.title}</h3>
+              <p className="text-gray-600">{feature.description}</p>
             </div>
           ))}
         </div>
+      </section>
+
+      {/* Eco-Friendly Section */}
+      <section className="py-16 px-6 md:px-12 text-center bg-gray-50">
+        <h2 className="text-3xl md:text-5xl font-bold mb-8">
+          Going digital and eco-friendly
+        </h2>
+        <p className="text-gray-600 max-w-2xl mx-auto mb-8">
+          By using Tablebite, you ensure that all your menus are{" "}
+          <strong>digitally available</strong> to your customers. This reduces
+          costs and helps the environment by eliminating paper menus.{" "}
+          <strong>Powered by renewable energy</strong>.
+        </p>
       </section>
 
       {/* Co-Founders Section */}
-      <section className="py-16 bg-gradient-to-br from-gray-200 via-gray-100 to-white text-center">
-        <h2 className="text-3xl md:text-5xl font-bold text-gray-900 mb-8">Meet Our Leadership</h2>
-        <p className="text-lg text-gray-600 mb-12 max-w-xl mx-auto">
-          Tablebite is brought to life by a visionary team of co-founders and experts.
-        </p>
+      <section className="py-16 px-6 md:px-12 bg-white text-gray-900 text-center">
+        <h2 className="text-3xl md:text-5xl font-bold mb-8">Meet the Founders</h2>
         <div className="flex flex-wrap justify-center gap-8">
           {[
             { name: "Dhanesh KJ", role: "Co-Founder" },
-            { name: "Aneesh Edavalath", role: "Co-Founder" },
+            { name: "Aneesh Edavath", role: "Co-Founder" },
             { name: "Jessmon T James", role: "Co-Founder" },
-            { name: "Mithun Joseph", role: "Partner & CTO" },
-            { name: "Adhil", role: "Partner & CTO" },
-          ].map((member, index) => (
+          ].map((founder, idx) => (
             <div
-              key={index}
-              className="bg-white rounded-lg shadow-lg p-6 w-64 text-center flex flex-col items-center hover:shadow-2xl transition-all"
+              key={idx}
+              className="p-6 bg-gray-100 border border-gray-200 rounded-lg shadow-md hover:shadow-lg transition w-60 text-center"
             >
-              <Icon icon="fa-solid:user" className="text-5xl text-[#10B601] mb-4" />
-              <h3 className="text-xl font-bold text-gray-800">{member.name}</h3>
-              <p className="text-gray-600">{member.role}</p>
+              <Icon
+                icon="fa-solid:user"
+                className="text-4xl text-red-500 mb-4"
+              />
+              <h3 className="text-2xl font-semibold mb-1">{founder.name}</h3>
+              <p className="text-gray-600">{founder.role}</p>
             </div>
           ))}
         </div>
       </section>
 
-      {/* Call-to-Action Section */}
-      <section className="py-12 bg-gradient-to-br from-[#10B601] to-[#50D14F] text-white text-center">
-        <h2 className="text-4xl font-bold mb-4">Ready to Experience the Future of Dining?</h2>
-        <p className="text-lg max-w-xl mx-auto mb-8">
-          Join hundreds of restaurants transforming their menus and elevating customer satisfaction.
-        </p>
-        <button className="px-8 py-4 bg-white text-[#10B601] font-medium rounded-full shadow-lg hover:shadow-xl transition-all">
-          Get Started Today
-        </button>
-      </section>
-
       {/* Footer */}
-      <footer className="w-full py-8 bg-gray-900 text-gray-100 text-center">
-        <div className="flex flex-col items-center space-y-4">
-          <h1 className="text-3xl font-extrabold text-transparent bg-clip-text bg-gradient-to-r from-[#10B601] to-[#50D14F]">
-            Tablebite
-          </h1>
-          <p className="text-gray-400 text-sm">
-            &copy; {new Date().getFullYear()} Tablebite. All Rights Reserved.
-          </p>
+      <footer className="w-full bg-gray-900 text-gray-100 py-8 text-center">
+        <p>&copy; {new Date().getFullYear()} tablebite.in. All rights reserved.</p>
+        <div className="text-sm mt-2">
+          We use cookies to ensure you get the best experience on our website.{" "}
+          <a href="#cookie-policy" className="underline">
+            More in our <strong>cookie policy</strong>
+          </a>
         </div>
       </footer>
     </div>
