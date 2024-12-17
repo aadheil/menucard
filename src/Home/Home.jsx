@@ -28,9 +28,17 @@ function Home() {
   // Fixed categories
   const categories = ['Starters', 'Main Course', 'Desserts'];
 
+  // Manage item description expansion state
+  const [expandedDescriptions, setExpandedDescriptions] = useState({});
+
+  // Modal State for PDP
+  const [showPdp, setShowPdp] = useState(false);
+  const [selectedItem, setSelectedItem] = useState(null);
+
   useEffect(() => {
     fetchColorTheme();
   }, []);
+  
 
   useEffect(() => {
     const handleClickOutside = (event) => {
@@ -88,6 +96,8 @@ function Home() {
     fetchData();
   }, []);
 
+
+  
   const scrollToSearchBar = () => {
     if (searchInputRef.current) {
       searchInputRef.current.scrollIntoView({ behavior: 'smooth' });
@@ -114,6 +124,8 @@ function Home() {
     }
   };
 
+  
+
   const plusItems = (id) => {
     setItems(items.map(item =>
       item.id === id ? { ...item, cartCount: item.cartCount + 1 } : item
@@ -138,33 +150,57 @@ function Home() {
       .filter(item => item.cartCount > 0));
   };
 
-  const getItems = async () => {
-    const username = "admin";
-    const password = "admin123";
-    const reqHeaders = {
-      'Authorization': 'Basic ' + btoa(username + ":" + password)
-    };
+const getItems = async () => {
+  const username = "admin";
+  const password = "admin123";
+  const reqHeaders = {
+    'Authorization': 'Basic ' + btoa(username + ":" + password)
+  };
+
+  try {
+    // Make the API request
     const res = await getMenuListByRestaurantIdAndRestaurantName(restaurantId, restaurantName, reqHeaders);
+
+    // Check if the response has an error or status 500
+    if (res?.status === 500) {
+      alert('No menus found with the provided restaurant id and restaurant name');
+      return;
+    }
+
+    // If response is successful, proceed to map the data
+    const mockImages = [
+      'https://images6.alphacoders.com/129/thumb-1920-1290353.jpg',
+      'https://images6.alphacoders.com/129/thumb-1920-1290353.jpg',
+      'https://images6.alphacoders.com/129/thumb-1920-1290353.jpg'
+    ];
+
+    // Map the data with additional fallback values and mock images if necessary
     const newData = res?.data?.map((item) => ({
       id: item?.id,
-      name: item?.itemName,
-      description: item?.itemDescription || "",
-      price: item?.price,
-      imageUrl: item?.imageUrl ?? 'https://developers.elementor.com/docs/assets/img/elementor-placeholder-image.png',
-      category: item?.category ?? 'Starters',
-      cartCount: 0,
-      type: item?.type ?? 'Veg',
-      rating: item?.rating ?? 4.2,
-      ratingCount: item?.ratingCount ?? 250,
-      customisable: item?.customisable || false
+      name: item?.itemName || 'Unknown Item',  // Fallback for item name
+      description: item?.itemDescription || '',  // Fallback for description
+      price: item?.price || 0,  // Fallback for price
+      imageUrl: item?.imageUrl ?? 'https://developers.elementor.com/docs/assets/img/elementor-placeholder-image.png',  // Fallback for image
+      images: mockImages,  // Assign mock images
+      category: item?.category ?? 'Starters',  // Fallback for category
+      cartCount: 0,  // Initialize cart count to 0
+      type: item?.type ?? 'Veg',  // Fallback for type
+      rating: item?.rating ?? 4.2,  // Fallback for rating
+      ratingCount: item?.ratingCount ?? 250,  // Fallback for rating count
+      customisable: item?.customisable || false  // Fallback for customisable
     }));
+
+    // Update the items state with the newly mapped data
     setItems(newData);
     setLoading(false);
 
-    if (res?.status === 500) {
-      alert('No menus found with provided restaurant id and restaurant name');
-    }
-  };
+  } catch (error) {
+    console.error('Error fetching items:', error);
+    alert("Failed to fetch the menu items. Please try again later.");
+    setLoading(false);
+  }
+};
+
 
   useEffect(() => {
     getItems();
@@ -195,6 +231,23 @@ function Home() {
     );
   });
 
+  const toggleDescription = (id) => {
+    setExpandedDescriptions((prev) => ({
+      ...prev,
+      [id]: !prev[id]
+    }));
+  };
+
+  const openPdp = (item) => {
+    setSelectedItem(item);
+    setShowPdp(true);
+  };
+
+  const closePdp = () => {
+    setShowPdp(false);
+    setSelectedItem(null);
+  };
+
   const SkeletonLoader = () => (
     <div className="w-full flex items-start p-4 border-b border-gray-200 animate-pulse">
       {/* Text Content Skeleton */}
@@ -208,8 +261,6 @@ function Home() {
       <div className="w-32 h-32 ml-6 bg-gray-200 rounded-lg"></div>
     </div>
   );
-  
-  
 
   return (
     <div className="bg-white min-h-screen w-full font-sans text-gray-800">
@@ -219,24 +270,24 @@ function Home() {
         <h2 className="font-bold text-2xl mt-1 text-green-600">{restaurantName}</h2>
       </div>
 
-   {/* Search Bar */}
-<div className="sticky top-0 z-10 p-4 border-b border-gray-200 bg-white " ref={searchInputRef}>
-  <div className="relative w-full">
-    <input
-      className="w-full bg-white text-gray-700 text-base placeholder-gray-500 px-5 py-3 rounded-full border border-gray-300 focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent shadow-sm transition duration-200 text-[16px]"
-      type="text"
-      value={searchTerm}
-      onChange={handleSearchChange}
-      placeholder="Search for dishes..."
-      style={{ fontSize: '16px' }} /* Ensure consistent font size */
-    />
-    <button
-      className="absolute right-4 top-1/2 transform -translate-y-1/2 text-gray-500 hover:text-green-600 transition duration-200"
-    >
-      <Icon icon="ic:round-search" className="text-xl" />
-    </button>
-  </div>
-</div>
+      {/* Search Bar */}
+      <div className="sticky top-0 z-10 p-4 border-b border-gray-200 bg-white " ref={searchInputRef}>
+        <div className="relative w-full">
+          <input
+            className="w-full bg-white text-gray-700 text-base placeholder-gray-500 px-5 py-3 rounded-full border border-gray-300 focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent shadow-sm transition duration-200 text-[16px]"
+            type="text"
+            value={searchTerm}
+            onChange={handleSearchChange}
+            placeholder="Search for dishes..."
+            style={{ fontSize: '16px' }} /* Ensure consistent font size */
+          />
+          <button
+            className="absolute right-4 top-1/2 transform -translate-y-1/2 text-gray-500 hover:text-green-600 transition duration-200"
+          >
+            <Icon icon="ic:round-search" className="text-xl" />
+          </button>
+        </div>
+      </div>
 
       {/* Veg/Non-Veg Toggle and Custom Dropdown */}
       <div className="p-3 border-b border-gray-200 flex items-center gap-4 relative" ref={dropdownRef}>
@@ -297,93 +348,107 @@ function Home() {
         </div>
       </div>
 
-
- {/* Item Listing */}
-<div className="flex flex-col" style={{ paddingBottom: '70px' }}>
-  {loading ? (
-    Array(5).fill().map((_, idx) => <SkeletonLoader key={idx} />)
-  ) : filteredItems.length === 0 ? (
-    <div className="text-center py-10">
-      <p className="text-gray-600 text-lg font-medium">No results found</p>
-      <p className="text-gray-500 text-sm mt-1">Try adjusting your search or filters.</p>
-    </div>
-  ) : (
-    filteredItems.map((item, index) => (
-      <div
-        key={item.id}
-        className={`w-full flex flex-row items-start p-4 border-b border-gray-200 ${
-          index === filteredItems.length - 1 ? 'pb-0' : ''
-        }`}
-      >
-        <div className="flex-1 flex flex-col pr-4">
-          <h1 className="font-semibold text-lg text-gray-900">{item.name}</h1>
-          <h2 className="font-semibold text-md text-gray-800 mb-1">₹ {item.price}</h2>
-          <div className="flex items-center text-sm mb-2">
-            <Icon icon="ic:round-star-rate" className="mr-1 text-yellow-500" />
-            <span className="font-medium text-gray-700">
-              {item.rating ?? 4.2} ({item.ratingCount ?? 250})
-            </span>
+      {/* Item Listing */}
+      <div className="flex flex-col" style={{ paddingBottom: '70px' }}>
+        {loading ? (
+          Array(5).fill().map((_, idx) => <SkeletonLoader key={idx} />)
+        ) : filteredItems.length === 0 ? (
+          <div className="text-center py-10">
+            <p className="text-gray-600 text-lg font-medium">No results found</p>
+            <p className="text-gray-500 text-sm mt-1">Try adjusting your search or filters.</p>
           </div>
-          <p className="text-sm text-gray-600 mb-2 leading-relaxed">
-            Serves 1 | {item.description.slice(0, 80)}
-            {item.description.length > 80 && '...'}{' '}
-            <span className="text-sm cursor-pointer font-medium text-blue-600">more</span>
-          </p>
-        </div>
-
-        <div className="relative w-36 h-36">
-          <img
-            src={item.imageUrl}
-            alt={item.name}
-            className="w-full h-full object-cover rounded-lg shadow-md"
-          />
-          {item.cartCount === 0 ? (
-            <button
-              onClick={() => updateToCart(item?.id)}
-              className="absolute bottom-0 left-1/2 transform -translate-x-1/2 translate-y-[35%] bg-green-500 text-white font-medium text-base rounded-full px-6 py-2 shadow-lg"
-            >
-              ADD
-            </button>
-          ) : (
-            <div
-              className="absolute bottom-0 left-1/2 transform -translate-x-1/2 translate-y-[35%] border-2 rounded-full p-1 bg-white flex items-center gap-3 shadow-md"
-              style={{ borderColor: themeColor }}
-            >
-              <button
-                onClick={() => minusItems(item?.id)}
-                className="px-3 py-1 font-bold rounded-full text-base focus:outline-none"
-                style={{ color: themeColor }}
-              >
-                <Icon icon="ic:baseline-minus" />
-              </button>
-
-              <span className="font-bold text-base" style={{ color: themeColor }}>
-                {item?.cartCount}
-              </span>
-
-              <button
-                onClick={() => plusItems(item?.id)}
-                className="px-3 py-1 font-bold rounded-full text-base focus:outline-none"
-                style={{ color: themeColor }}
-              >
-                <Icon icon="ic:baseline-plus" />
-              </button>
+        ) : ( filteredItems.map((item, index) => (
+          <div
+            key={item.id}
+            className={`w-full flex flex-row items-start p-4 border-b border-gray-200 ${
+              index === filteredItems.length - 1 ? 'pb-0' : ''
+            }`}
+            onClick={() => openPdp(item)} // Open PDP
+          >
+            <div className="flex-1 flex flex-col pr-4">
+              <h1 className="font-semibold text-lg text-gray-900">{item.name}</h1>
+              <h2 className="font-semibold text-md text-gray-800 mb-1">₹ {item.price}</h2>
+              <div className="flex items-center text-sm mb-2">
+                <Icon icon="ic:round-star-rate" className="mr-1 text-yellow-500" />
+                <span className="font-medium text-gray-700">
+                  {item.rating ?? 4.2} ({item.ratingCount ?? 250})
+                </span>
+              </div>
+              <p className="text-sm text-gray-600 mb-2 leading-relaxed">
+                Serves 1 |{' '}
+                {expandedDescriptions[item.id]
+                  ? item.description
+                  : item.description.slice(0, 58) + '...'}
+                <span
+                  onClick={(e) => {
+                    e.stopPropagation(); // Prevent triggering PDP modal
+                    toggleDescription(item.id);
+                  }}
+                  className="text-sm cursor-pointer font-medium text-blue-600"
+                >
+                  {expandedDescriptions[item.id] ? 'less' : 'more'}
+                </span>
+              </p>
             </div>
-          )}
-
-          {item.customisable && (
-            <span className="absolute top-full left-1/2 transform -translate-x-1/2 mt-2 text-sm font-medium text-gray-600">
-              Customisable
-            </span>
-          )}
-        </div>
+        
+            <div className="relative w-36 h-36">
+              <img
+                src={item.imageUrl}
+                alt={item.name}
+                className="w-full h-full object-cover rounded-lg shadow-md"
+              />
+              {item.cartCount === 0 ? (
+                <button
+                  onClick={(e) => {
+                    e.stopPropagation(); // Prevent triggering PDP modal
+                    updateToCart(item.id);
+                  }}
+                  className="absolute bottom-0 left-1/2 transform -translate-x-1/2 translate-y-[35%] bg-green-500 text-white font-medium text-base rounded-full px-6 py-2 shadow-lg"
+                >
+                  ADD
+                </button>
+              ) : (
+                <div
+                  className="absolute bottom-0 left-1/2 transform -translate-x-1/2 translate-y-[35%] border-2 rounded-full p-1 bg-white flex items-center gap-3 shadow-md"
+                  style={{ borderColor: themeColor }}
+                >
+                  <button
+                    onClick={(e) => {
+                      e.stopPropagation(); // Prevent triggering PDP modal
+                      minusItems(item.id);
+                    }}
+                    className="px-3 py-1 font-bold rounded-full text-base focus:outline-none"
+                    style={{ color: themeColor }}
+                  >
+                    <Icon icon="ic:baseline-minus" />
+                  </button>
+        
+                  <span className="font-bold text-base" style={{ color: themeColor }}>
+                    {item.cartCount}
+                  </span>
+        
+                  <button
+                    onClick={(e) => {
+                      e.stopPropagation(); // Prevent triggering PDP modal
+                      plusItems(item.id);
+                    }}
+                    className="px-3 py-1 font-bold rounded-full text-base focus:outline-none"
+                    style={{ color: themeColor }}
+                  >
+                    <Icon icon="ic:baseline-plus" />
+                  </button>
+                </div>
+              )}
+        
+              {item.customisable && (
+                <span className="absolute top-full left-1/2 transform -translate-x-1/2 mt-2 text-sm font-medium text-gray-600">
+                  Customisable
+                </span>
+              )}
+            </div>
+          </div>
+        )))}
       </div>
-    ))
-  )}
-</div>
-
-
-
 
       <AddCart
         themeColor={themeColor}
@@ -391,6 +456,89 @@ function Home() {
         cartItems={cartItems}
         onSearchIconClick={scrollToSearchBar}
       />
+
+     
+      {/* PDP Modal (Slide-up Panel) */}
+      {showPdp && selectedItem && (
+  <div
+    className="fixed inset-0 bg-black bg-opacity-50 z-50 flex items-end justify-center"
+    onClick={closePdp}
+  >
+    <div
+      className="w-full bg-white rounded-t-3xl p-4 transition-transform transform translate-y-0"
+      style={{
+        transform: showPdp ? 'translateY(0)' : 'translateY(100%)',
+        transition: 'transform 0.3s ease-out',
+      }}
+      onClick={(e) => e.stopPropagation()}
+    >
+      {/* Title and Close Button */}
+      <div className="flex justify-between items-center mb-4">
+        <h2 className="text-xl font-semibold text-gray-900">{selectedItem.name}</h2>
+        <button
+          className="ml-auto text-gray-600 hover:text-gray-800"
+          onClick={closePdp}
+        >
+          <Icon icon="ic:round-close" className="text-2xl" />
+        </button>
+      </div>
+
+      {/* Scrollable Image Section */}
+      <div
+  className="flex gap-2 overflow-x-auto images-scroll-container mb-4"
+  style={{ scrollBehavior: 'smooth', overflowY: 'hidden' }} // Hide vertical overflow explicitly
+>
+
+        {/* Main Image as part of scrollable thumbnails */}
+        <div className="w-36 h-36 flex-shrink-0">
+          <img
+            src={selectedItem.imageUrl} // Main image URL
+            alt={selectedItem.name}
+            className="w-full h-full object-cover rounded-lg shadow-md"
+          />
+        </div>
+        {/* Thumbnail Images */}
+        {selectedItem.images?.map((image, index) => (
+          <div key={index} className="w-36 h-36 flex-shrink-0 cursor-pointer">
+            <img
+              src={image} // Additional thumbnail images
+              alt={`Thumbnail ${index + 1}`}
+              className="w-full h-full object-cover rounded-lg shadow-md border-2 border-transparent hover:border-gray-300 transition"
+            />
+          </div>
+        ))}
+      </div>
+
+      {/* Product Details */}
+      <div>
+        <h3 className="font-semibold text-lg text-gray-900">₹ {selectedItem.price}</h3>
+        <p className="text-sm text-gray-600 mb-2">{selectedItem.description}</p>
+        <div className="flex items-center text-sm mb-2">
+          <Icon icon="ic:round-star-rate" className="mr-1 text-yellow-500" />
+          <span className="font-medium text-gray-700">
+            {selectedItem.rating ?? 4.2} ({selectedItem.ratingCount ?? 250})
+          </span>
+        </div>
+      </div>
+
+      {/* Close Button */}
+      <div className="mt-4 flex justify-end">
+        <button
+          className="bg-gray-200 text-gray-700 px-6 py-2 rounded-full"
+          onClick={closePdp}
+        >
+          Close
+        </button>
+      </div>
+    </div>
+  </div>
+)}
+
+
+
+
+
+
     </div>
   );
 }

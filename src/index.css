@@ -17,4 +17,25 @@
   .animate-zoom {
     animation: zoom 0.3s ease-in-out;
   }
+
+  /* Hide only the horizontal scrollbar for Webkit browsers (Chrome, Safari) */
+.images-scroll-container::-webkit-scrollbar {
+  height: 0px; /* Hides horizontal scrollbar */
+}
+
+/* For Firefox */
+.images-scroll-container {
+  scrollbar-width: thin; /* Keeps vertical scrollbar thin */
+  scrollbar-color: transparent transparent; /* Hide horizontal thumb */
+}
+
+/* Hide scrollbar in IE/Edge */
+.images-scroll-container {
+  -ms-overflow-style: none; /* IE and Edge */
+}
+
+.images-scroll-container::-webkit-scrollbar-thumb {
+  background-color: transparent; /* Ensures scrollbar thumb is invisible */
+}
+
   
