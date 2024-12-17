@@ -3,30 +3,24 @@ import React, { useState } from 'react';
 function AddCart({ cartCount = 0, cartItems = [], onViewCart, themeColor }) {
   const [isModalVisible, setIsModalVisible] = useState(false);
 
-  
   const handleViewCart = () => {
-    // If you have an external view cart logic, call it here:
     if (typeof onViewCart === 'function') {
       onViewCart();
     }
-    // Otherwise, just show the modal
     setIsModalVisible(true);
   };
 
-  if (cartCount === 0) {
-    return null;
-  }
-
-  const totalPrice = cartItems.reduce((acc, item) => acc + (item.price * item.cartCount), 0);
+  const totalPrice = cartItems.reduce((acc, item) => acc + item.price * item.cartCount, 0);
 
   return (
     <>
+      {/* Fixed View Basket Section */}
       <div
         className="fixed bottom-0 w-full z-50 flex items-center justify-between px-4 py-3"
         style={{ backgroundColor: themeColor }}
       >
         <span className="text-white text-sm font-medium">
-          {cartCount === 1 ? "1 item added" : `${cartCount} items added`}
+          {cartCount > 0 ? `${cartCount} items added` : 'Cart is empty'}
         </span>
         <button
           className="text-white text-sm font-semibold flex items-center"
@@ -44,7 +38,7 @@ function AddCart({ cartCount = 0, cartItems = [], onViewCart, themeColor }) {
         </button>
       </div>
 
-      {/* Modal to show cart items */}
+      {/* Modal to Show Cart Items */}
       {isModalVisible && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-40">
           <div className="bg-white rounded-lg shadow-lg w-11/12 max-w-md p-4 relative">
@@ -52,7 +46,10 @@ function AddCart({ cartCount = 0, cartItems = [], onViewCart, themeColor }) {
             {cartItems.length > 0 ? (
               <ul className="space-y-3">
                 {cartItems.map((item, index) => (
-                  <li key={index} className="flex justify-between items-center border-b border-gray-200 pb-2">
+                  <li
+                    key={index}
+                    className="flex justify-between items-center border-b border-gray-200 pb-2"
+                  >
                     <div className="flex flex-col">
                       <span className="font-medium text-sm">{item.name}</span>
                       <span className="text-xs text-gray-500">Qty: {item.cartCount}</span>
