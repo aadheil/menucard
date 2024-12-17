@@ -190,15 +190,20 @@ function Home() {
   });
 
   const SkeletonLoader = () => (
-    <div className="w-full flex flex-row items-start p-3 border-b border-gray-200">
-      <div className="w-20 h-20 bg-gray-200 rounded-md animate-pulse"></div>
-      <div className="flex flex-col ml-3 flex-1 animate-pulse">
-        <div className="h-4 bg-gray-200 w-3/4 rounded mb-2"></div>
-        <div className="h-3 bg-gray-200 w-1/2 rounded mb-2"></div>
-        <div className="h-3 bg-gray-200 w-1/3 rounded"></div>
+    <div className="w-full flex items-start p-4 border-b border-gray-200 animate-pulse">
+      {/* Text Content Skeleton */}
+      <div className="flex-1 space-y-3">
+        <div className="h-6 bg-gray-200 rounded w-2/3"></div>
+        <div className="h-5 bg-gray-200 rounded w-3/4"></div>
+        <div className="h-4 bg-gray-200 rounded w-1/2"></div>
       </div>
+  
+      {/* Larger Image Skeleton */}
+      <div className="w-32 h-32 ml-6 bg-gray-200 rounded-lg"></div>
     </div>
   );
+  
+  
 
   return (
     <div className="bg-white min-h-screen w-full font-sans text-gray-800">
@@ -207,24 +212,25 @@ function Home() {
         <h1 className="font-bold text-gray-900 text-xl leading-tight">Find delicious items from</h1>
         <h2 className="font-bold text-2xl mt-1 text-green-600">{restaurantName}</h2>
       </div>
-    {/* Search Bar */}
-    <div className="p-4 border-b border-gray-200 bg-white" ref={searchInputRef}>
-      <div className="relative w-full">
-        <input
-          className="w-full bg-white text-gray-700 text-base placeholder-gray-500 px-5 py-3 rounded-full border border-gray-300 focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent shadow-sm transition duration-200 text-[16px]"
-          type="text"
-          value={searchTerm}
-          onChange={handleSearchChange}
-          placeholder="Search for dishes..."
-          style={{ fontSize: '16px' }} /* Ensure consistent font size */
-        />
-        <button
-          className="absolute right-4 top-1/2 transform -translate-y-1/2 text-gray-500 hover:text-green-600 transition duration-200"
-        >
-          <Icon icon="ic:round-search" className="text-xl" />
-        </button>
-      </div>
-    </div>
+
+   {/* Search Bar */}
+<div className="sticky top-0 z-10 p-4 border-b border-gray-200 bg-white " ref={searchInputRef}>
+  <div className="relative w-full">
+    <input
+      className="w-full bg-white text-gray-700 text-base placeholder-gray-500 px-5 py-3 rounded-full border border-gray-300 focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent shadow-sm transition duration-200 text-[16px]"
+      type="text"
+      value={searchTerm}
+      onChange={handleSearchChange}
+      placeholder="Search for dishes..."
+      style={{ fontSize: '16px' }} /* Ensure consistent font size */
+    />
+    <button
+      className="absolute right-4 top-1/2 transform -translate-y-1/2 text-gray-500 hover:text-green-600 transition duration-200"
+    >
+      <Icon icon="ic:round-search" className="text-xl" />
+    </button>
+  </div>
+</div>
 
       {/* Veg/Non-Veg Toggle and Custom Dropdown */}
       <div className="p-3 border-b border-gray-200 flex items-center gap-4 relative" ref={dropdownRef}>
