@@ -73,6 +73,12 @@ function Home() {
   };
 
   useEffect(() => {
+    getItems();
+    window.scrollTo(0, 0); // Ensure the page does not suddenly jump
+  }, []);
+  
+
+  useEffect(() => {
     const fetchData = async () => {
       setLoading(true);
       const headers = getHeaders();
